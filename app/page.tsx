@@ -17,48 +17,50 @@ import {
   ArrowRight,
 } from "lucide-react";
 
-export default function Home() {
-  const categories = [
-    { icon: Code, title: "Web Development", count: "1,234 jobs" },
-    { icon: Paintbrush, title: "Graphic Design", count: "987 jobs" },
-    { icon: Video, title: "Video Editing", count: "654 jobs" },
-    { icon: PenTool, title: "Content Writing", count: "543 jobs" },
-    { icon: Megaphone, title: "Digital Marketing", count: "432 jobs" },
-    { icon: TrendingUp, title: "SEO & Analytics", count: "321 jobs" },
-  ];
+const iconMap: Record<string, any> = {
+  Code,
+  Paintbrush,
+  Video,
+  PenTool,
+  Megaphone,
+  TrendingUp,
+};
 
-  const featuredJobs = [
-    {
-      id: "1",
-      title: "Modern E-commerce Website Development",
-      description:
-        "Looking for an experienced web developer to build a complete e-commerce platform with payment integration and admin panel.",
-      budget: "PKR 50,000 - 80,000",
-      location: "Karachi, Pakistan",
-      postedTime: "2 hours ago",
-      category: "Web Development",
-    },
-    {
-      id: "2",
-      title: "Social Media Graphics Package",
-      description:
-        "Need creative graphics for Instagram, Facebook, and LinkedIn. Should include posts, stories, and cover images.",
-      budget: "PKR 15,000 - 25,000",
-      location: "Lahore, Pakistan",
-      postedTime: "5 hours ago",
-      category: "Graphic Design",
-    },
-    {
-      id: "3",
-      title: "Product Demo Video Production",
-      description:
-        "Create a professional 2-3 minute product demonstration video with animations and voice-over.",
-      budget: "PKR 30,000 - 45,000",
-      location: "Islamabad, Pakistan",
-      postedTime: "1 day ago",
-      category: "Video Editing",
-    },
-  ];
+async function getCategories() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/categories`, {
+      cache: 'force-cache',
+      next: { revalidate: 3600 } // Revalidate every hour
+    });
+    if (!response.ok) throw new Error('Failed to fetch');
+    const data = await response.json();
+    return data.categories.map((cat: any) => ({
+      ...cat,
+      icon: iconMap[cat.icon] || Code
+    }));
+  } catch (error) {
+    console.error('Error fetching categories:', error);
+    return [];
+  }
+}
+
+async function getFeaturedJobs() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/jobs`, {
+      cache: 'no-store'
+    });
+    if (!response.ok) throw new Error('Failed to fetch');
+    const data = await response.json();
+    return data.jobs.slice(0, 3); // Get first 3 jobs
+  } catch (error) {
+    console.error('Error fetching jobs:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const categories = await getCategories();
+  const featuredJobs = await getFeaturedJobs();
 
   const howItWorks = [
     {

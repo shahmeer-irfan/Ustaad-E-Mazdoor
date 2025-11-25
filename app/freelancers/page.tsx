@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FreelancerCard from "@/components/FreelancerCard";
@@ -19,69 +19,35 @@ export default function FreelancersPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
+  const [freelancers, setFreelancers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const freelancers = [
-    {
-      id: "1",
-      name: "Ahmed Hassan",
-      title: "Full Stack Developer",
-      location: "Karachi, Pakistan",
-      rating: 4.9,
-      reviews: 87,
-      skills: ["React", "Node.js", "MongoDB", "PostgreSQL"],
-      hourlyRate: "PKR 2,500",
-    },
-    {
-      id: "2",
-      name: "Fatima Khan",
-      title: "Graphic Designer",
-      location: "Lahore, Pakistan",
-      rating: 4.8,
-      reviews: 124,
-      skills: ["Adobe Photoshop", "Illustrator", "Figma", "Branding"],
-      hourlyRate: "PKR 1,800",
-    },
-    {
-      id: "3",
-      name: "Ali Raza",
-      title: "Video Editor",
-      location: "Islamabad, Pakistan",
-      rating: 4.7,
-      reviews: 56,
-      skills: ["Adobe Premiere", "After Effects", "DaVinci Resolve"],
-      hourlyRate: "PKR 2,000",
-    },
-    {
-      id: "4",
-      name: "Ayesha Malik",
-      title: "Content Writer",
-      location: "Karachi, Pakistan",
-      rating: 4.9,
-      reviews: 98,
-      skills: ["SEO Writing", "Copywriting", "Blog Posts", "Technical Writing"],
-      hourlyRate: "PKR 1,500",
-    },
-    {
-      id: "5",
-      name: "Hamza Iqbal",
-      title: "Digital Marketing Specialist",
-      location: "Lahore, Pakistan",
-      rating: 4.8,
-      reviews: 76,
-      skills: ["Facebook Ads", "Google Ads", "SEO", "Email Marketing"],
-      hourlyRate: "PKR 2,200",
-    },
-    {
-      id: "6",
-      name: "Sara Ahmed",
-      title: "UI/UX Designer",
-      location: "Remote",
-      rating: 4.9,
-      reviews: 102,
-      skills: ["Figma", "Adobe XD", "User Research", "Prototyping"],
-      hourlyRate: "PKR 2,800",
-    },
-  ];
+  useEffect(() => {
+    fetchFreelancers();
+  }, [category, location, searchTerm]);
+
+  const fetchFreelancers = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (category !== 'all') params.append('category', category);
+      if (location !== 'all') params.append('location', location);
+      if (searchTerm) params.append('search', searchTerm);
+
+      const response = await fetch(`/api/freelancers?${params.toString()}`);
+      const data = await response.json();
+      setFreelancers(data.freelancers || []);
+    } catch (error) {
+      console.error('Failed to fetch freelancers:', error);
+      setFreelancers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    fetchFreelancers();
+  };
 
   return (
     <div className="min-h-screen">
@@ -143,7 +109,7 @@ export default function FreelancersPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-8">
           <h2 className="text-2xl font-bold">
-            {freelancers.length} Freelancers Found
+            {loading ? 'Loading...' : `${freelancers.length} Freelancers Found`}
           </h2>
           <Select defaultValue="rating">
             <SelectTrigger className="w-48">
@@ -158,17 +124,21 @@ export default function FreelancersPage() {
           </Select>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {freelancers.map((freelancer) => (
-            <FreelancerCard key={freelancer.id} {...freelancer} />
-          ))}
-        </div>
-
-        <div className="mt-12 flex justify-center">
-          <Button variant="outline" size="lg">
-            Load More Freelancers
-          </Button>
-        </div>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading freelancers...</p>
+          </div>
+        ) : freelancers.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No freelancers found. Try adjusting your filters.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {freelancers.map((freelancer) => (
+              <FreelancerCard key={freelancer.id} {...freelancer} />
+            ))}
+          </div>
+        )}
       </div>
 
       <Footer />

@@ -3,10 +3,26 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Briefcase } from "lucide-react";
+import { useUser, useClerk } from "@clerk/nextjs";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { user, isLoaded } = useUser();
+  const { signOut } = useClerk();
+
+  const handleSignOut = async () => {
+    await signOut();
+  };
 
   return (
     <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
@@ -35,15 +51,74 @@ const Navigation = () => {
 
           {/* Desktop Actions */}
           <div className="hidden md:flex items-center space-x-3">
-            <Button variant="ghost" asChild className="font-medium">
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button
-              asChild
-              className="rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
-            >
-              <Link href="/signup">Sign Up</Link>
-            </Button>
+            {!isLoaded ? (
+              <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
+            ) : user ? (
+              <>
+                <Button variant="ghost" asChild className="font-medium">
+                  <Link href="/post-job">Post Job</Link>
+                </Button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                      <Avatar className="h-10 w-10">
+                        <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
+                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                          {user.firstName?.charAt(0) || user.emailAddresses[0].emailAddress.charAt(0).toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                    <DropdownMenuLabel className="font-normal">
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium leading-none">
+                          {user.fullName || user.firstName || "User"}
+                        </p>
+                        <p className="text-xs leading-none text-muted-foreground">
+                          {user.emailAddresses[0].emailAddress}
+                        </p>
+                        {user.unsafeMetadata?.role && (
+                          <p className="text-xs leading-none text-muted-foreground capitalize mt-1">
+                            {user.unsafeMetadata.role as string}
+                          </p>
+                        )}
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem asChild>
+                      <Link href="/dashboard" className="cursor-pointer">
+                        <UserIcon className="mr-2 h-4 w-4" />
+                        <span>Dashboard</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/my-jobs" className="cursor-pointer">
+                        <Briefcase className="mr-2 h-4 w-4" />
+                        <span>My Jobs</span>
+                      </Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      <span>Log out</span>
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <>
+                <Button variant="ghost" asChild className="font-medium">
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button
+                  asChild
+                  className="rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
+                >
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -85,19 +160,49 @@ const Navigation = () => {
               How It Works
             </Link>
             <div className="pt-4 space-y-2">
-              <Button variant="ghost" asChild className="w-full font-medium">
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                  Login
-                </Link>
-              </Button>
-              <Button
-                asChild
-                className="w-full rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
-              >
-                <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                  Sign Up
-                </Link>
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="ghost" asChild className="w-full font-medium justify-start">
+                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                      <UserIcon className="mr-2 h-4 w-4" />
+                      Dashboard
+                    </Link>
+                  </Button>
+                  <Button variant="ghost" asChild className="w-full font-medium justify-start">
+                    <Link href="/post-job" onClick={() => setMobileMenuOpen(false)}>
+                      <Briefcase className="mr-2 h-4 w-4" />
+                      Post Job
+                    </Link>
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    className="w-full font-medium justify-start"
+                    onClick={() => {
+                      handleSignOut();
+                      setMobileMenuOpen(false);
+                    }}
+                  >
+                    <LogOut className="mr-2 h-4 w-4" />
+                    Log Out
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button variant="ghost" asChild className="w-full font-medium">
+                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                      Login
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    className="w-full rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
+                  >
+                    <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                      Sign Up
+                    </Link>
+                  </Button>
+                </>
+              )}
             </div>
           </div>
         )}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import JobCard from "@/components/JobCard";
@@ -19,69 +19,35 @@ export default function BrowseJobsPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [category, setCategory] = useState("all");
   const [location, setLocation] = useState("all");
+  const [jobs, setJobs] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const jobs = [
-    {
-      id: "1",
-      title: "Modern E-commerce Website Development",
-      description:
-        "Looking for an experienced web developer to build a complete e-commerce platform with payment integration and admin panel.",
-      budget: "PKR 50,000 - 80,000",
-      location: "Karachi, Pakistan",
-      postedTime: "2 hours ago",
-      category: "Web Development",
-    },
-    {
-      id: "2",
-      title: "Social Media Graphics Package",
-      description:
-        "Need creative graphics for Instagram, Facebook, and LinkedIn. Should include posts, stories, and cover images.",
-      budget: "PKR 15,000 - 25,000",
-      location: "Lahore, Pakistan",
-      postedTime: "5 hours ago",
-      category: "Graphic Design",
-    },
-    {
-      id: "3",
-      title: "Product Demo Video Production",
-      description:
-        "Create a professional 2-3 minute product demonstration video with animations and voice-over.",
-      budget: "PKR 30,000 - 45,000",
-      location: "Islamabad, Pakistan",
-      postedTime: "1 day ago",
-      category: "Video Editing",
-    },
-    {
-      id: "4",
-      title: "SEO Optimization for E-commerce Store",
-      description:
-        "Need an SEO expert to optimize our online store for better search engine rankings and organic traffic.",
-      budget: "PKR 25,000 - 40,000",
-      location: "Karachi, Pakistan",
-      postedTime: "1 day ago",
-      category: "SEO & Analytics",
-    },
-    {
-      id: "5",
-      title: "Blog Content Writer for Tech Website",
-      description:
-        "Looking for a skilled content writer to create engaging blog posts about technology, software, and digital trends.",
-      budget: "PKR 10,000 - 20,000",
-      location: "Remote",
-      postedTime: "2 days ago",
-      category: "Content Writing",
-    },
-    {
-      id: "6",
-      title: "Mobile App UI/UX Design",
-      description:
-        "Need a talented designer to create a modern, user-friendly interface for our mobile application.",
-      budget: "PKR 35,000 - 55,000",
-      location: "Lahore, Pakistan",
-      postedTime: "3 days ago",
-      category: "Graphic Design",
-    },
-  ];
+  useEffect(() => {
+    fetchJobs();
+  }, [category, location, searchTerm]);
+
+  const fetchJobs = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams();
+      if (category !== 'all') params.append('category', category);
+      if (location !== 'all') params.append('location', location);
+      if (searchTerm) params.append('search', searchTerm);
+
+      const response = await fetch(`/api/jobs?${params.toString()}`);
+      const data = await response.json();
+      setJobs(data.jobs || []);
+    } catch (error) {
+      console.error('Failed to fetch jobs:', error);
+      setJobs([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleSearch = () => {
+    fetchJobs();
+  };
 
   return (
     <div className="min-h-screen">
@@ -143,14 +109,26 @@ export default function BrowseJobsPage() {
       <div className="container mx-auto px-4 py-12">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-2xl font-bold">Available Jobs</h2>
-          <p className="text-muted-foreground">{jobs.length} jobs found</p>
+          <p className="text-muted-foreground">
+            {loading ? 'Loading...' : `${jobs.length} jobs found`}
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {jobs.map((job) => (
-            <JobCard key={job.id} {...job} />
-          ))}
-        </div>
+        {loading ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">Loading jobs...</p>
+          </div>
+        ) : jobs.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No jobs found. Try adjusting your filters.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {jobs.map((job) => (
+              <JobCard key={job.id} {...job} />
+            ))}
+          </div>
+        )}
       </div>
 
       <Footer />
