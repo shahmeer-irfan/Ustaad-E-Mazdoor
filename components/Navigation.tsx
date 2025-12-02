@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, User as UserIcon, Briefcase } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Briefcase, FileText } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import {
   DropdownMenu,
@@ -19,6 +19,8 @@ const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+
+  const userRole = user?.unsafeMetadata?.role as string | undefined;
 
   const handleSignOut = async () => {
     await signOut();
@@ -92,6 +94,14 @@ const Navigation = () => {
                         <span>Dashboard</span>
                       </Link>
                     </DropdownMenuItem>
+                    {userRole === 'freelancer' && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/my-proposals" className="cursor-pointer">
+                          <FileText className="mr-2 h-4 w-4" />
+                          <span>My Proposals</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem asChild>
                       <Link href="/my-jobs" className="cursor-pointer">
                         <Briefcase className="mr-2 h-4 w-4" />

@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -22,8 +22,10 @@ import { ArrowRight, Briefcase, DollarSign, MapPin, Clock } from "lucide-react";
 
 export default function PostJobPage() {
   const router = useRouter();
-  const { isSignedIn, userId } = useAuth();
+  const { isSignedIn, userId, isLoaded } = useAuth();
+  const { user } = useUser();
   const [loading, setLoading] = useState(false);
+  const [authChecked, setAuthChecked] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -35,6 +37,28 @@ export default function PostJobPage() {
     duration: "",
     skillsRequired: "",
   });
+
+  useEffect(() => {
+    if (isLoaded) {
+      if (!isSignedIn) {
+        router.push('/sign-in?redirect=/post-job');
+      } else {
+        setAuthChecked(true);
+      }
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded || !authChecked) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navigation />
+        <div className="container mx-auto px-4 py-20 text-center">
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

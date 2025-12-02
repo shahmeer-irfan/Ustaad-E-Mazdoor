@@ -82,8 +82,8 @@ export async function GET(
       postedTime: getRelativeTime(job.created_at),
       category: job.category_name,
       skillsRequired: job.skills_required || [],
-      duration: job.duration,
-      proposals: job.proposals_count,
+      duration: job.project_duration,
+      proposals: job.proposal_count || 0,
       client: {
         name: job.company_name || job.client_name,
         rating: parseFloat(job.client_rating).toFixed(1),

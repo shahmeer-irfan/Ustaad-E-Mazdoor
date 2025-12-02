@@ -18,15 +18,16 @@ export async function POST(request: Request) {
       title,
       category,
       description,
-      budget,
+      budgetMin,
+      budgetMax,
       budgetType,
       location,
       duration,
-      skillsRequired,
+      skills,
     } = body;
 
     // Validate required fields
-    if (!title || !category || !description || !budget) {
+    if (!title || !category || !description || !budgetMin || !budgetMax) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
@@ -59,20 +60,23 @@ export async function POST(request: Request) {
 
     const categoryId = categoryResult.rows[0].id;
 
-    // Parse budget (e.g., "50000-80000" or "2500")
-    let budgetMin, budgetMax;
-    if (budget.includes('-')) {
-      [budgetMin, budgetMax] = budget.split('-').map((b: string) => parseFloat(b.trim()));
-    } else {
-      budgetMin = budgetMax = parseFloat(budget);
+    // Validate budget values
+    const parsedBudgetMin = parseFloat(budgetMin);
+    const parsedBudgetMax = parseFloat(budgetMax);
+
+    if (isNaN(parsedBudgetMin) || isNaN(parsedBudgetMax) || parsedBudgetMin <= 0 || parsedBudgetMax < parsedBudgetMin) {
+      return NextResponse.json(
+        { error: 'Invalid budget values' },
+        { status: 400 }
+      );
     }
 
     // Insert job
     const insertJobQuery = `
       INSERT INTO jobs (
         client_id, title, description, category_id, 
-        budget_min, budget_max, budget_type, location, duration
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+        budget_min, budget_max, budget_type, location, project_duration, status
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING id
     `;
 
@@ -81,20 +85,20 @@ export async function POST(request: Request) {
       title,
       description,
       categoryId,
-      budgetMin,
-      budgetMax,
-      budgetType,
+      parsedBudgetMin,
+      parsedBudgetMax,
+      budgetType || 'fixed',
       location,
       duration,
+      'open',
     ]);
 
     const jobId = jobResult.rows[0].id;
 
     // Insert skills if provided
-    if (skillsRequired && skillsRequired.length > 0) {
-      const skills = skillsRequired.split(',').map((s: string) => s.trim());
-
+    if (skills && Array.isArray(skills) && skills.length > 0) {
       for (const skillName of skills) {
+        if (!skillName || skillName.trim() === '') continue;
         // Get or create skill
         const skillQuery = `
           INSERT INTO skills (name, slug)
