@@ -169,7 +169,7 @@ export default async function Home() {
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {categories.map((category) => (
+            {categories.map((category: any) => (
               <CategoryCard key={category.title} {...category} />
             ))}
           </div>
@@ -197,7 +197,7 @@ export default async function Home() {
             </Button>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredJobs.map((job) => (
+            {featuredJobs.map((job: any) => (
               <JobCard key={job.id} {...job} />
             ))}
           </div>
