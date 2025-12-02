@@ -17,9 +17,9 @@ export async function GET(request: Request) {
         j.budget_max,
         j.budget_type,
         j.location,
-        j.duration,
+        j.project_duration,
         j.created_at,
-        j.proposals_count,
+        j.proposal_count,
         c.name as category,
         c.slug as category_slug,
         ARRAY_AGG(DISTINCT s.name) as skills
@@ -53,8 +53,8 @@ export async function GET(request: Request) {
 
     query += `
       GROUP BY j.id, j.title, j.description, j.budget_min, j.budget_max, 
-               j.budget_type, j.location, j.duration, j.created_at, 
-               j.proposals_count, c.name, c.slug
+               j.budget_type, j.location, j.project_duration, j.created_at, 
+               j.proposal_count, c.name, c.slug
       ORDER BY j.created_at DESC
     `;
 
@@ -69,9 +69,10 @@ export async function GET(request: Request) {
         ? `PKR ${row.budget_min.toLocaleString()} - ${row.budget_max.toLocaleString()}`
         : `PKR ${row.budget_min.toLocaleString()}/hr`,
       location: row.location,
+      duration: row.project_duration,
       postedTime: getRelativeTime(row.created_at),
       category: row.category,
-      proposals: row.proposals_count,
+      proposals: row.proposal_count || 0,
       skills: row.skills.filter(Boolean),
     }));
 

@@ -94,9 +94,9 @@ CREATE TABLE public.jobs (
   budget_max DECIMAL(10, 2),
   budget_type TEXT CHECK (budget_type IN ('fixed', 'hourly')),
   location TEXT,
-  duration TEXT,
+  project_duration TEXT,
   status TEXT CHECK (status IN ('open', 'in_progress', 'completed', 'cancelled')) DEFAULT 'open',
-  proposals_count INTEGER DEFAULT 0,
+  proposal_count INTEGER DEFAULT 0,
   views_count INTEGER DEFAULT 0,
   created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
