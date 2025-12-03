@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "@/components/ui/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Card } from "@/components/ui/card";
@@ -91,11 +92,18 @@ export default function MyProposalsPage() {
         throw new Error(error.error || "Failed to withdraw proposal");
       }
 
-      alert("Proposal withdrawn successfully!");
+      toast({
+        title: "Success!",
+        description: "Proposal withdrawn successfully!",
+      });
       fetchProposals();
     } catch (error: any) {
-      console.error("Failed to withdraw proposal:", error);
-      alert(error.message || "Failed to withdraw proposal");
+      console.error("Error withdrawing proposal:", error);
+      toast({
+        title: "Error",
+        description: error.message || "Failed to withdraw proposal",
+        variant: "destructive",
+      });
     } finally {
       setDeletingId(null);
     }

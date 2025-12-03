@@ -16,7 +16,6 @@ import {
   MapPin,
   Clock,
   FileText,
-  Eye,
   Calendar,
 } from "lucide-react";
 
@@ -183,11 +182,6 @@ export default function MyJobsPage() {
                       <FileText className="w-5 h-5 text-primary" />
                       <span className="font-semibold text-lg">{job.proposalsCount}</span>
                       <span className="text-muted-foreground">Proposals</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Eye className="w-5 h-5 text-muted-foreground" />
-                      <span className="font-semibold">{job.viewsCount}</span>
-                      <span className="text-muted-foreground">Views</span>
                     </div>
                     <div className="flex items-center gap-2 ml-auto">
                       <Calendar className="w-4 h-4 text-muted-foreground" />

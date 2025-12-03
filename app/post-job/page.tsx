@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth, useUser } from "@clerk/nextjs";
+import { toast } from "@/components/ui/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FullPageLoader } from "@/components/Loader";
@@ -57,7 +58,11 @@ export default function PostJobPage() {
     e.preventDefault();
     
     if (!isSignedIn) {
-      alert('Please sign in to post a job');
+      toast({
+        title: "Authentication Required",
+        description: "Please sign in to post a job",
+        variant: "destructive",
+      });
       router.push('/sign-in');
       return;
     }
@@ -82,11 +87,18 @@ export default function PostJobPage() {
       }
 
       const data = await response.json();
-      alert('Job posted successfully!');
+      toast({
+        title: "Success!",
+        description: "Job posted successfully!",
+      });
       router.push(`/job/${data.jobId}`);
     } catch (error: any) {
       console.error('Failed to post job:', error);
-      alert(error.message || 'Failed to post job. Please try again.');
+      toast({
+        title: "Error",
+        description: error.message || 'Failed to post job. Please try again.',
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }

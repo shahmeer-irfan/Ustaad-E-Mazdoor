@@ -8,9 +8,20 @@ export function Loader({ size = "medium" }: { size?: "small" | "medium" | "large
   return (
     <div className="flex items-center justify-center">
       <div className={`${sizeClasses[size]} relative`}>
-        <div className="absolute inset-0 border-4 border-primary/20 rounded-full"></div>
-        <div className="absolute inset-0 border-4 border-transparent border-t-primary rounded-full animate-spin"></div>
-        <div className="absolute inset-2 border-4 border-transparent border-t-primary/60 rounded-full animate-spin" style={{ animationDirection: "reverse", animationDuration: "0.8s" }}></div>
+        {/* Outer rotating ring with gradient */}
+        <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-primary via-primary/80 to-transparent animate-spin"></div>
+        <div className="absolute inset-0.5 rounded-full bg-background"></div>
+        
+        {/* Middle pulsing ring */}
+        <div className="absolute inset-1 rounded-full bg-gradient-to-br from-primary/60 via-primary/40 to-transparent animate-spin" style={{ animationDuration: "1.5s" }}></div>
+        <div className="absolute inset-1.5 rounded-full bg-background"></div>
+        
+        {/* Inner rotating ring (reverse) */}
+        <div className="absolute inset-2 rounded-full bg-gradient-to-tl from-primary/40 via-primary/20 to-transparent animate-spin" style={{ animationDirection: "reverse", animationDuration: "2s" }}></div>
+        <div className="absolute inset-2.5 rounded-full bg-background"></div>
+        
+        {/* Center pulse */}
+        <div className="absolute inset-3 rounded-full bg-primary/30 animate-pulse"></div>
       </div>
     </div>
   );

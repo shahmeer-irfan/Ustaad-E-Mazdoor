@@ -28,10 +28,10 @@ const FreelancerCard = ({
   avatar,
 }: FreelancerCardProps) => {
   return (
-    <Card className="p-6 hover:shadow-lg transition-all duration-300">
+    <Card className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:-translate-y-1 hover:border-primary/50 border-2">
       <div className="space-y-4">
         <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl font-bold flex-shrink-0">
+          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl font-bold flex-shrink-0 group-hover:bg-primary/20 transition-colors">
             {avatar ? (
               <img
                 src={avatar}
@@ -43,7 +43,7 @@ const FreelancerCard = ({
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate">{name}</h3>
+            <h3 className="font-semibold text-lg truncate hover:text-primary transition-colors">{name}</h3>
             <p className="text-muted-foreground text-sm">{title}</p>
             <div className="flex items-center mt-1 text-sm">
               <MapPin className="w-4 h-4 mr-1 text-muted-foreground" />
@@ -64,12 +64,12 @@ const FreelancerCard = ({
 
         <div className="flex flex-wrap gap-2">
           {skills.slice(0, 3).map((skill) => (
-            <Badge key={skill} variant="outline">
+            <Badge key={skill} variant="outline" className="hover:bg-primary/10 transition-colors">
               {skill}
             </Badge>
           ))}
           {skills.length > 3 && (
-            <Badge variant="outline">+{skills.length - 3} more</Badge>
+            <Badge variant="outline" className="hover:bg-primary/10 transition-colors">+{skills.length - 3} more</Badge>
           )}
         </div>
 
@@ -78,7 +78,7 @@ const FreelancerCard = ({
             <p className="text-sm text-muted-foreground">Starting at</p>
             <p className="font-semibold text-lg">{hourlyRate}/hr</p>
           </div>
-          <Button asChild>
+          <Button asChild className="hover:scale-105 transition-transform">
             <Link href={`/freelancer/${id}`}>View Profile</Link>
           </Button>
         </div>

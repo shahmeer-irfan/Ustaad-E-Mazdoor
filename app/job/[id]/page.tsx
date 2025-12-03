@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "@/components/ui/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -78,10 +79,6 @@ export default function JobDetailPage({
   };
 
   const handleProposalAction = async (proposalId: string, status: 'accepted' | 'rejected') => {
-    if (!confirm(`Are you sure you want to ${status === 'accepted' ? 'accept' : 'reject'} this proposal?`)) {
-      return;
-    }
-
     setUpdatingProposal(proposalId);
     try {
       const response = await fetch(`/api/proposals/${proposalId}`, {
@@ -95,12 +92,19 @@ export default function JobDetailPage({
         throw new Error(error.error || 'Failed to update proposal');
       }
 
-      alert(`Proposal ${status} successfully!`);
+      toast({
+        title: "Success!",
+        description: `Proposal ${status} successfully!`,
+      });
       fetchProposals();
       fetchJobDetails(); // Refresh job to update proposal count and status
     } catch (error: any) {
       console.error('Failed to update proposal:', error);
-      alert(error.message || 'Failed to update proposal');
+      toast({
+        title: "Error",
+        description: error.message || 'Failed to update proposal',
+        variant: "destructive",
+      });
     } finally {
       setUpdatingProposal(null);
     }
@@ -446,10 +450,6 @@ export default function JobDetailPage({
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Proposals</span>
                   <span className="font-semibold">{job.proposals || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Views</span>
-                  <span className="font-semibold">{job.views || 0}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Posted</span>
