@@ -303,7 +303,7 @@ export default function JobDetailPage({
                                     <div className="flex items-center gap-1">
                                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                       <span className="font-semibold">
-                                        {proposal.avg_rating ? Number(proposal.avg_rating).toFixed(1) : 'N/A'}
+                                        {proposal.avg_rating ? parseFloat(proposal.avg_rating).toFixed(1) : 'N/A'}
                                       </span>
                                       <span className="text-muted-foreground">
                                         ({proposal.review_count || 0})
