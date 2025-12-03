@@ -47,10 +47,13 @@ export default function JobDetailPage({
 
   useEffect(() => {
     fetchJobDetails();
-    if (isClient) {
+  }, [id]);
+
+  useEffect(() => {
+    if (isClient && job) {
       fetchProposals();
     }
-  }, [id, isClient]);
+  }, [id, isClient, job?.id]);
 
   const fetchJobDetails = async () => {
     try {
@@ -72,9 +75,17 @@ export default function JobDetailPage({
       if (response.ok) {
         const data = await response.json();
         setProposals(data.proposals || []);
+      } else if (response.status === 404) {
+        // Profile not found - user might not be synced yet
+        console.log('Profile not found - proposals cannot be loaded');
+        setProposals([]);
+      } else {
+        console.error('Failed to fetch proposals:', response.status);
+        setProposals([]);
       }
     } catch (error) {
       console.error('Failed to fetch proposals:', error);
+      setProposals([]);
     }
   };
 
@@ -292,15 +303,17 @@ export default function JobDetailPage({
                                     <div className="flex items-center gap-1">
                                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                       <span className="font-semibold">
-                                        {proposal.avg_rating?.toFixed(1) || 'N/A'}
+                                        {proposal.avg_rating ? Number(proposal.avg_rating).toFixed(1) : 'N/A'}
                                       </span>
                                       <span className="text-muted-foreground">
                                         ({proposal.review_count || 0})
                                       </span>
                                     </div>
-                                    <span className="text-muted-foreground">
-                                      {proposal.success_rate}% success rate
-                                    </span>
+                                    {proposal.success_rate !== null && proposal.success_rate !== undefined && (
+                                      <span className="text-muted-foreground">
+                                        {proposal.success_rate}% success rate
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               </div>
