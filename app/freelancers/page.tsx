@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import FreelancerCard from "@/components/FreelancerCard";
+import { InlineLoader } from "@/components/Loader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -125,9 +126,7 @@ export default function FreelancersPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading freelancers...</p>
-          </div>
+          <InlineLoader message="Loading freelancers..." />
         ) : freelancers.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No freelancers found. Try adjusting your filters.</p>

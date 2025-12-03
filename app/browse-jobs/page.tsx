@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import JobCard from "@/components/JobCard";
+import { InlineLoader } from "@/components/Loader";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -115,9 +116,7 @@ export default function BrowseJobsPage() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12">
-            <p className="text-muted-foreground">Loading jobs...</p>
-          </div>
+          <InlineLoader message="Loading jobs..." />
         ) : jobs.length === 0 ? (
           <div className="text-center py-12">
             <p className="text-muted-foreground">No jobs found. Try adjusting your filters.</p>

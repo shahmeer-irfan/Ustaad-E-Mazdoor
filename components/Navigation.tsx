@@ -80,11 +80,11 @@ const Navigation = () => {
                         <p className="text-xs leading-none text-muted-foreground">
                           {user.emailAddresses[0].emailAddress}
                         </p>
-                        {user.unsafeMetadata?.role && (
+                        {user.unsafeMetadata?.role ? (
                           <p className="text-xs leading-none text-muted-foreground capitalize mt-1">
-                            {user.unsafeMetadata.role as string}
+                            {String(user.unsafeMetadata.role)}
                           </p>
-                        )}
+                        ) : null}
                       </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
