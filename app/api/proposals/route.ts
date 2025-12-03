@@ -158,7 +158,7 @@ export async function POST(request: NextRequest) {
 
     // Update job proposal count
     await pool.query(
-      'UPDATE jobs SET proposal_count = proposal_count + 1 WHERE id = $1',
+      'UPDATE jobs SET proposals_count = proposals_count + 1 WHERE id = $1',
       [jobId]
     );
 

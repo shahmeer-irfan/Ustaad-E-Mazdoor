@@ -141,7 +141,7 @@ export async function DELETE(
 
     // Update job proposal count
     await pool.query(
-      'UPDATE jobs SET proposal_count = GREATEST(proposal_count - 1, 0) WHERE id = $1',
+      'UPDATE jobs SET proposals_count = GREATEST(proposals_count - 1, 0) WHERE id = $1',
       [jobId]
     );
 

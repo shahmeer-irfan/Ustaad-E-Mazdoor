@@ -75,7 +75,7 @@ export async function POST(request: Request) {
     const insertJobQuery = `
       INSERT INTO jobs (
         client_id, title, description, category_id, 
-        budget_min, budget_max, budget_type, location, project_duration, status
+        budget_min, budget_max, budget_type, location, duration, status
       ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
       RETURNING id
     `;

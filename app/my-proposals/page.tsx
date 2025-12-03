@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InlineLoader } from "@/components/Loader";
 import Link from "next/link";
 import {
   Clock,
@@ -157,9 +158,7 @@ export default function MyProposalsPage() {
           </div>
 
           {loading ? (
-            <Card className="p-12 text-center">
-              <p className="text-muted-foreground">Loading proposals...</p>
-            </Card>
+            <InlineLoader message="Loading proposals..." />
           ) : proposals.length === 0 ? (
             <Card className="p-12 text-center">
               <AlertCircle className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />

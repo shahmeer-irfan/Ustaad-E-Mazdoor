@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProposalDialog } from "@/components/ProposalDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { InlineLoader, FullPageLoader } from "@/components/Loader";
 import Link from "next/link";
 import {
   MapPin,
@@ -109,9 +110,7 @@ export default function JobDetailPage({
     return (
       <div className="min-h-screen bg-background">
         <Navigation />
-        <div className="container mx-auto px-4 py-20 text-center">
-          <p className="text-muted-foreground">Loading job details...</p>
-        </div>
+        <InlineLoader message="Loading job details..." />
         <Footer />
       </div>
     );
