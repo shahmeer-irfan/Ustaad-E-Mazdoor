@@ -35,17 +35,22 @@ export async function POST(request: Request) {
     }
 
     // Get profile ID from clerk_id
-    const profileQuery = 'SELECT id FROM profiles WHERE clerk_id = $1';
+    const profileQuery = 'SELECT id, user_type, email FROM profiles WHERE clerk_id = $1';
     const profileResult = await pool.query(profileQuery, [userId]);
 
     if (profileResult.rows.length === 0) {
+      console.error('❌ Profile not found for Clerk ID:', userId);
       return NextResponse.json(
-        { error: 'Profile not found' },
+        { 
+          error: 'Profile not found. Please contact support or try logging out and back in.',
+          details: 'Your account exists in Clerk but not in the database. This usually means the webhook is not configured.'
+        },
         { status: 404 }
       );
     }
 
     const clientId = profileResult.rows[0].id;
+    console.log('✅ Profile found:', profileResult.rows[0].email, 'Type:', profileResult.rows[0].user_type);
 
     // Get category ID
     const categoryQuery = 'SELECT id FROM categories WHERE slug = $1';
