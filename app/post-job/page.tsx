@@ -138,7 +138,7 @@ export default function PostJobPage() {
               {/* Category */}
               <div className="space-y-2">
                 <Label htmlFor="category" className="text-lg font-semibold">
-                  Category *
+                  Service Category *
                 </Label>
                 <Select
                   value={formData.category}
@@ -146,15 +146,21 @@ export default function PostJobPage() {
                   required
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
+                    <SelectValue placeholder="Select a service category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="web-development">Web Development</SelectItem>
-                    <SelectItem value="graphic-design">Graphic Design</SelectItem>
-                    <SelectItem value="video-editing">Video Editing</SelectItem>
-                    <SelectItem value="content-writing">Content Writing</SelectItem>
-                    <SelectItem value="digital-marketing">Digital Marketing</SelectItem>
-                    <SelectItem value="seo-analytics">SEO & Analytics</SelectItem>
+                    <SelectItem value="plumbing">🔧 Plumbing</SelectItem>
+                    <SelectItem value="carpentry">🪚 Carpentry</SelectItem>
+                    <SelectItem value="electrician">⚡ Electrician</SelectItem>
+                    <SelectItem value="painting">🎨 Painting</SelectItem>
+                    <SelectItem value="ac-refrigeration">❄️ AC & Refrigeration</SelectItem>
+                    <SelectItem value="construction">🏗️ Construction</SelectItem>
+                    <SelectItem value="cleaning">🧹 Cleaning</SelectItem>
+                    <SelectItem value="gardening">🌱 Gardening</SelectItem>
+                    <SelectItem value="tailoring">✂️ Tailoring</SelectItem>
+                    <SelectItem value="auto-mechanic">🔩 Auto Mechanic</SelectItem>
+                    <SelectItem value="welding">🔥 Welding</SelectItem>
+                    <SelectItem value="home-appliances">🔌 Home Appliances</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

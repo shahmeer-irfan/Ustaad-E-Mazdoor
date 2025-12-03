@@ -57,9 +57,15 @@ const Navigation = () => {
               <div className="w-8 h-8 rounded-full bg-muted animate-pulse"></div>
             ) : user ? (
               <>
-                <Button variant="ghost" asChild className="font-medium">
-                  <Link href="/post-job">Post Job</Link>
-                </Button>
+                {userRole === 'freelancer' ? (
+                  <Button variant="ghost" asChild className="font-medium">
+                    <Link href="/browse-jobs">Browse Jobs</Link>
+                  </Button>
+                ) : (
+                  <Button variant="ghost" asChild className="font-medium">
+                    <Link href="/post-job">Post Job</Link>
+                  </Button>
+                )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-10 w-10 rounded-full">
@@ -102,12 +108,14 @@ const Navigation = () => {
                         </Link>
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem asChild>
-                      <Link href="/my-jobs" className="cursor-pointer">
-                        <Briefcase className="mr-2 h-4 w-4" />
-                        <span>My Jobs</span>
-                      </Link>
-                    </DropdownMenuItem>
+                    {userRole === 'client' && (
+                      <DropdownMenuItem asChild>
+                        <Link href="/my-jobs" className="cursor-pointer">
+                          <Briefcase className="mr-2 h-4 w-4" />
+                          <span>My Jobs</span>
+                        </Link>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer">
                       <LogOut className="mr-2 h-4 w-4" />
