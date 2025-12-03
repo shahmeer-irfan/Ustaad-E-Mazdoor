@@ -82,12 +82,18 @@ export default function BrowseJobsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="web-dev">Web Development</SelectItem>
-                  <SelectItem value="design">Graphic Design</SelectItem>
-                  <SelectItem value="video">Video Editing</SelectItem>
-                  <SelectItem value="writing">Content Writing</SelectItem>
-                  <SelectItem value="marketing">Digital Marketing</SelectItem>
-                  <SelectItem value="seo">SEO & Analytics</SelectItem>
+                  <SelectItem value="plumbing">🔧 Plumbing</SelectItem>
+                  <SelectItem value="carpentry">🪚 Carpentry</SelectItem>
+                  <SelectItem value="electrician">⚡ Electrician</SelectItem>
+                  <SelectItem value="painting">🎨 Painting</SelectItem>
+                  <SelectItem value="ac-refrigeration">❄️ AC & Refrigeration</SelectItem>
+                  <SelectItem value="construction">🏗️ Construction</SelectItem>
+                  <SelectItem value="cleaning">🧹 Cleaning</SelectItem>
+                  <SelectItem value="gardening">🌱 Gardening</SelectItem>
+                  <SelectItem value="tailoring">✂️ Tailoring</SelectItem>
+                  <SelectItem value="auto-mechanic">🔩 Auto Mechanic</SelectItem>
+                  <SelectItem value="welding">🔥 Welding</SelectItem>
+                  <SelectItem value="home-appliances">🔌 Home Appliances</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={location} onValueChange={setLocation}>

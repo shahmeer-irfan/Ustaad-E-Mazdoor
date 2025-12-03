@@ -145,21 +145,21 @@ export default function JobDetailPage({
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div className="flex-1">
                   <Badge variant="secondary" className="mb-3">
-                    {job.category_name}
+                    {job.category}
                   </Badge>
                   <h1 className="text-3xl font-bold mb-4">{job.title}</h1>
                   <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4" />
-                      <span>Posted {new Date(job.created_at).toLocaleDateString()}</span>
+                      <span>Posted {job.postedTime}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-4 h-4" />
-                      <span>{job.location}</span>
+                      <span className="capitalize">{job.location}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Briefcase className="w-4 h-4" />
-                      <span>{job.project_duration}</span>
+                      <span>{job.duration}</span>
                     </div>
                   </div>
                 </div>
@@ -176,17 +176,17 @@ export default function JobDetailPage({
               <div className="flex items-center justify-between py-4 border-y">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
-                    {job.budget_type === 'fixed' ? 'Fixed Price' : 'Hourly Rate'}
+                    {job.budgetType}
                   </div>
                   <div className="text-2xl font-bold">
-                    PKR {job.budget_min?.toLocaleString() || '0'} - {job.budget_max?.toLocaleString() || '0'}
+                    {job.budget}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-muted-foreground mb-1">
                     Proposals
                   </div>
-                  <div className="text-2xl font-bold">{job.proposal_count || 0}</div>
+                  <div className="text-2xl font-bold">{job.proposals || 0}</div>
                 </div>
               </div>
             </Card>
@@ -212,16 +212,18 @@ export default function JobDetailPage({
                 </Card>
 
                 {/* Skills Required */}
-                <Card className="p-8">
-                  <h2 className="text-2xl font-bold mb-4">Skills Required</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills?.map((skill: string) => (
-                      <Badge key={skill} variant="outline" className="px-3 py-1">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </Card>
+                {job.skillsRequired && job.skillsRequired.length > 0 && (
+                  <Card className="p-8">
+                    <h2 className="text-2xl font-bold mb-4">Skills Required</h2>
+                    <div className="flex flex-wrap gap-2">
+                      {job.skillsRequired.map((skill: string, index: number) => (
+                        <Badge key={index} variant="outline" className="px-3 py-1">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </Card>
+                )}
 
                 {/* Similar Jobs */}
                 <Card className="p-8">
@@ -235,14 +237,12 @@ export default function JobDetailPage({
                           className="block p-4 border rounded-lg hover:border-primary transition-colors"
                         >
                           <h3 className="font-semibold mb-2">{similarJob.title}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                            {similarJob.description}
-                          </p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <span className="font-semibold text-foreground">
-                              PKR {similarJob.budget_min?.toLocaleString() || '0'} - {similarJob.budget_max?.toLocaleString() || '0'}
+                              {similarJob.budget}
                             </span>
-                            <span>{similarJob.location}</span>
+                            <span className="capitalize">{similarJob.location}</span>
+                            <span>{similarJob.postedTime}</span>
                           </div>
                         </Link>
                       ))
@@ -403,16 +403,16 @@ export default function JobDetailPage({
                 <div className="flex items-start gap-3">
                   <Avatar className="w-12 h-12">
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                      {job.client_name?.charAt(0) || 'C'}
+                      {job.client?.name?.charAt(0) || 'C'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-semibold">{job.client_name || 'Client'}</div>
+                    <div className="font-semibold">{job.client?.name || 'Client'}</div>
                     <div className="flex items-center gap-1 text-sm">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{job.client_rating?.toFixed(1) || 'N/A'}</span>
+                      <span className="font-semibold">{job.client?.rating || 'N/A'}</span>
                       <span className="text-muted-foreground">
-                        ({job.client_reviews || 0} reviews)
+                        ({job.client?.reviews || 0} reviews)
                       </span>
                     </div>
                   </div>
@@ -421,11 +421,15 @@ export default function JobDetailPage({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Jobs Posted</span>
-                    <span className="font-semibold">{job.client_jobs_posted || 0}</span>
+                    <span className="font-semibold">{job.client?.jobsPosted || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Hire Rate</span>
+                    <span className="font-semibold">{job.client?.hireRate || '0%'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Location</span>
-                    <span className="font-semibold">{job.location}</span>
+                    <span className="font-semibold capitalize">{job.location}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Status</span>
@@ -441,15 +445,19 @@ export default function JobDetailPage({
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Proposals</span>
-                  <span className="font-semibold">{job.proposal_count || 0}</span>
+                  <span className="font-semibold">{job.proposals || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Posted On</span>
-                  <span className="font-semibold">{new Date(job.created_at).toLocaleDateString()}</span>
+                  <span className="text-muted-foreground">Views</span>
+                  <span className="font-semibold">{job.views || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Project Duration</span>
-                  <span className="font-semibold">{job.project_duration}</span>
+                  <span className="text-muted-foreground">Posted</span>
+                  <span className="font-semibold">{job.postedTime}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">Duration</span>
+                  <span className="font-semibold">{job.duration}</span>
                 </div>
               </div>
             </Card>
@@ -464,8 +472,8 @@ export default function JobDetailPage({
         jobId={id}
         jobTitle={job.title}
         budgetRange={
-          job.budget_min && job.budget_max
-            ? { min: job.budget_min, max: job.budget_max }
+          job.budgetMin && job.budgetMax
+            ? { min: job.budgetMin, max: job.budgetMax }
             : undefined
         }
       />
