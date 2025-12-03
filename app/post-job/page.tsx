@@ -149,14 +149,12 @@ export default function PostJobPage() {
                     <SelectValue placeholder="Select a category" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="web-dev">Web Development</SelectItem>
-                    <SelectItem value="design">Graphic Design</SelectItem>
-                    <SelectItem value="video">Video Editing</SelectItem>
-                    <SelectItem value="writing">Content Writing</SelectItem>
-                    <SelectItem value="marketing">Digital Marketing</SelectItem>
-                    <SelectItem value="seo">SEO & Analytics</SelectItem>
-                    <SelectItem value="mobile">Mobile App Development</SelectItem>
-                    <SelectItem value="data">Data Entry</SelectItem>
+                    <SelectItem value="web-development">Web Development</SelectItem>
+                    <SelectItem value="graphic-design">Graphic Design</SelectItem>
+                    <SelectItem value="video-editing">Video Editing</SelectItem>
+                    <SelectItem value="content-writing">Content Writing</SelectItem>
+                    <SelectItem value="digital-marketing">Digital Marketing</SelectItem>
+                    <SelectItem value="seo-analytics">SEO & Analytics</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
