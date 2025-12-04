@@ -138,9 +138,9 @@ export default function MyJobsPage() {
                         </Badge>
                       </div>
                       <CardDescription className="text-base">
-                        {job.description.length > 200
+                        {job.description && job.description.length > 200
                           ? `${job.description.substring(0, 200)}...`
-                          : job.description}
+                          : job.description || 'No description'}
                       </CardDescription>
                     </div>
                   </div>

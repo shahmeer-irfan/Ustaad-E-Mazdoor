@@ -438,7 +438,7 @@ export default function DashboardPage() {
                                 {job.status}
                               </Badge>
                             </div>
-                            <CardDescription>{job.description.substring(0, 150)}...</CardDescription>
+                            <CardDescription>{job.description?.substring(0, 150) || 'No description'}...</CardDescription>
                           </div>
                         </div>
                       </CardHeader>
@@ -508,7 +508,7 @@ export default function DashboardPage() {
                               </Link>
                             </CardTitle>
                             <CardDescription className="mt-2">
-                              {proposal.coverLetter.substring(0, 150)}...
+                              {proposal.coverLetter?.substring(0, 150) || 'No cover letter'}...
                             </CardDescription>
                           </div>
                           <Badge
