@@ -99,7 +99,7 @@ export default function ContactPage() {
 
                 <Button
                   type="submit"
-                  className="w-full rounded-full bg-gradient-accent hover:opacity-90 transition-opacity group"
+                  className="w-full rounded-full bg-gradient-accent hover:opacity-90 hover:scale-105 hover:shadow-xl transition-all duration-300 group"
                   size="lg"
                 >
                   Send Message
@@ -120,7 +120,7 @@ export default function ContactPage() {
               </p>
 
               <div className="space-y-6">
-                <Card className="p-6">
+                <Card className="p-6 hover:scale-105 hover:shadow-xl hover:border-primary/50 transition-all duration-300">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Mail className="w-6 h-6 text-primary" />
@@ -137,7 +137,7 @@ export default function ContactPage() {
                   </div>
                 </Card>
 
-                <Card className="p-6">
+                <Card className="p-6 hover:scale-105 hover:shadow-xl hover:border-primary/50 transition-all duration-300">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <Phone className="w-6 h-6 text-primary" />
@@ -152,7 +152,7 @@ export default function ContactPage() {
                   </div>
                 </Card>
 
-                <Card className="p-6">
+                <Card className="p-6 hover:scale-105 hover:shadow-xl hover:border-primary/50 transition-all duration-300">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                       <MapPin className="w-6 h-6 text-primary" />

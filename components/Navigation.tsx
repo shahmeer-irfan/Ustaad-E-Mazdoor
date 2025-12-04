@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LogOut, User as UserIcon, Briefcase, FileText } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
@@ -19,6 +20,7 @@ const Navigation = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, isLoaded } = useUser();
   const { signOut } = useClerk();
+  const pathname = usePathname();
 
   const userRole = user?.unsafeMetadata?.role as string | undefined;
 
@@ -40,13 +42,31 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
-            <Button variant="ghost" asChild className="font-medium">
+            <Button 
+              variant="ghost" 
+              asChild 
+              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
+                pathname === '/browse-jobs' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
+              }`}
+            >
               <Link href="/browse-jobs">Find Work</Link>
             </Button>
-            <Button variant="ghost" asChild className="font-medium">
+            <Button 
+              variant="ghost" 
+              asChild 
+              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
+                pathname === '/freelancers' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
+              }`}
+            >
               <Link href="/freelancers">Find Talent</Link>
             </Button>
-            <Button variant="ghost" asChild className="font-medium">
+            <Button 
+              variant="ghost" 
+              asChild 
+              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
+                pathname === '/how-it-works' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
+              }`}
+            >
               <Link href="/how-it-works">How It Works</Link>
             </Button>
           </div>
@@ -58,17 +78,29 @@ const Navigation = () => {
             ) : user ? (
               <>
                 {userRole === 'freelancer' ? (
-                  <Button variant="ghost" asChild className="font-medium">
+                  <Button 
+                    variant="ghost" 
+                    asChild 
+                    className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
+                      pathname === '/browse-jobs' ? 'text-primary bg-primary/5' : ''
+                    }`}
+                  >
                     <Link href="/browse-jobs">Browse Jobs</Link>
                   </Button>
                 ) : (
-                  <Button variant="ghost" asChild className="font-medium">
+                  <Button 
+                    variant="ghost" 
+                    asChild 
+                    className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
+                      pathname === '/post-job' ? 'text-primary bg-primary/5' : ''
+                    }`}
+                  >
                     <Link href="/post-job">Post Job</Link>
                   </Button>
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full">
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full transition-all duration-300 hover:scale-110 hover:ring-2 hover:ring-primary/50">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
                         <AvatarFallback className="bg-primary/10 text-primary font-bold">

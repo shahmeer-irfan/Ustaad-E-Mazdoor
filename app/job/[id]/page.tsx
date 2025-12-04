@@ -10,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProposalDialog } from "@/components/ProposalDialog";
+import { ReviewDialog } from "@/components/ReviewDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InlineLoader, FullPageLoader } from "@/components/Loader";
 import Link from "next/link";
@@ -39,6 +40,8 @@ export default function JobDetailPage({
   const [proposals, setProposals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [proposalDialogOpen, setProposalDialogOpen] = useState(false);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedFreelancer, setSelectedFreelancer] = useState<{ id: string; name: string } | null>(null);
   const [updatingProposal, setUpdatingProposal] = useState<string | null>(null);
 
   const userRole = user?.unsafeMetadata?.role as string | undefined;
@@ -364,7 +367,7 @@ export default function JobDetailPage({
                                 <Button
                                   onClick={() => handleProposalAction(proposal.id, 'accepted')}
                                   disabled={updatingProposal === proposal.id}
-                                  className="bg-green-600 hover:bg-green-700"
+                                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200"
                                 >
                                   <CheckCircle className="w-4 h-4 mr-2" />
                                   Accept Proposal
@@ -373,9 +376,30 @@ export default function JobDetailPage({
                                   onClick={() => handleProposalAction(proposal.id, 'rejected')}
                                   disabled={updatingProposal === proposal.id}
                                   variant="destructive"
+                                  className="hover:scale-105 transition-all duration-200"
                                 >
                                   <XCircle className="w-4 h-4 mr-2" />
                                   Reject
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* Rate Freelancer Button for Completed Jobs */}
+                            {proposal.status === 'accepted' && job.status === 'completed' && (
+                              <div className="pt-2">
+                                <Button
+                                  onClick={() => {
+                                    setSelectedFreelancer({
+                                      id: proposal.freelancer_id,
+                                      name: proposal.freelancer_name
+                                    });
+                                    setReviewDialogOpen(true);
+                                  }}
+                                  variant="outline"
+                                  className="hover:scale-105 transition-all duration-200 hover:bg-primary/10"
+                                >
+                                  <Star className="w-4 h-4 mr-2" />
+                                  Rate Freelancer
                                 </Button>
                               </div>
                             )}
@@ -490,6 +514,18 @@ export default function JobDetailPage({
             : undefined
         }
       />
+
+      {/* Review Dialog */}
+      {selectedFreelancer && (
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onOpenChange={setReviewDialogOpen}
+          jobId={id}
+          freelancerId={selectedFreelancer.id}
+          freelancerName={selectedFreelancer.name}
+          jobTitle={job.title}
+        />
+      )}
 
       <Footer />
     </div>
