@@ -130,12 +130,12 @@ export default function PostJobPage() {
                 <Label htmlFor="title" className="text-lg font-semibold">
                   Job Title *
                 </Label>
-                <div className="relative">
-                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                <div className="relative group">
+                  <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
                   <Input
                     id="title"
                     type="text"
-                    placeholder="e.g., Modern E-commerce Website Development"
+                    placeholder="e.g., Fix Water Leakage in Kitchen Sink"
                     className="pl-10"
                     value={formData.title}
                     onChange={(e) => handleChange("title", e.target.value)}
@@ -184,7 +184,7 @@ export default function PostJobPage() {
                 </Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe your project in detail. Include requirements, deliverables, and any specific expectations..."
+                  placeholder="Describe your job in detail. Example: I need a plumber to fix water leakage in kitchen sink. The tap is dripping constantly and needs replacement. Please bring necessary tools and parts."
                   className="min-h-[150px]"
                   value={formData.description}
                   onChange={(e) => handleChange("description", e.target.value)}
@@ -219,12 +219,12 @@ export default function PostJobPage() {
                   <Label htmlFor="budgetMin" className="text-lg font-semibold">
                     Min Budget (PKR) *
                   </Label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <div className="relative group">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
                     <Input
                       id="budgetMin"
                       type="number"
-                      placeholder="e.g., 50000"
+                      placeholder="e.g., 2000"
                       className="pl-10"
                       value={formData.budgetMin}
                       onChange={(e) => handleChange("budgetMin", e.target.value)}
@@ -237,12 +237,12 @@ export default function PostJobPage() {
                   <Label htmlFor="budgetMax" className="text-lg font-semibold">
                     Max Budget (PKR) *
                   </Label>
-                  <div className="relative">
-                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <div className="relative group">
+                    <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
                     <Input
                       id="budgetMax"
                       type="number"
-                      placeholder="e.g., 80000"
+                      placeholder="e.g., 5000"
                       className="pl-10"
                       value={formData.budgetMax}
                       onChange={(e) => handleChange("budgetMax", e.target.value)}
@@ -259,7 +259,7 @@ export default function PostJobPage() {
                     Location *
                   </Label>
                   <div className="relative">
-                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
                     <Select
                       value={formData.location}
                       onValueChange={(value) => handleChange("location", value)}
@@ -288,7 +288,7 @@ export default function PostJobPage() {
                     Project Duration *
                   </Label>
                   <div className="relative">
-                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                    <Clock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
                     <Select
                       value={formData.duration}
                       onValueChange={(value) => handleChange("duration", value)}
@@ -318,7 +318,7 @@ export default function PostJobPage() {
                 <Input
                   id="skillsRequired"
                   type="text"
-                  placeholder="e.g., React, Node.js, MongoDB (comma separated)"
+                  placeholder="e.g., Pipe Installation, Leak Repair, Bathroom Fitting (comma separated)"
                   value={formData.skillsRequired}
                   onChange={(e) => handleChange("skillsRequired", e.target.value)}
                 />
@@ -354,11 +354,11 @@ export default function PostJobPage() {
           <div className="mt-8 p-6 bg-muted/50 rounded-lg">
             <h3 className="font-semibold mb-2">Tips for posting a great job:</h3>
             <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• Be specific about your requirements and deliverables</li>
-              <li>• Set a realistic budget based on project complexity</li>
-              <li>• Include examples or references if possible</li>
-              <li>• Clearly state your timeline and milestones</li>
-              <li>• Respond quickly to freelancer questions</li>
+              <li>• Be specific about the work location and access details</li>
+              <li>• Set a fair budget based on local market rates</li>
+              <li>• Mention if tools and materials are provided or needed</li>
+              <li>• Clearly state your availability and preferred timing</li>
+              <li>• Include photos of the work area if relevant</li>
             </ul>
           </div>
         </div>

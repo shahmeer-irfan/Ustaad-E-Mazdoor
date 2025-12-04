@@ -179,11 +179,11 @@ export default function JobDetailPage({
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
-                    <Bookmark className="w-5 h-5" />
+                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
+                    <Bookmark className="w-5 h-5 hover:text-primary transition-colors duration-200" />
                   </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="w-5 h-5" />
+                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
+                    <Share2 className="w-5 h-5 hover:text-primary transition-colors duration-200" />
                   </Button>
                 </div>
               </div>
