@@ -4,6 +4,7 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import JobCard from "@/components/JobCard";
+import pool from "@/lib/db";
 import {
   Code,
   Paintbrush,
@@ -28,34 +29,91 @@ const iconMap: Record<string, any> = {
 
 async function getCategories() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/categories`, {
-      cache: 'force-cache',
-      next: { revalidate: 3600 } // Revalidate every hour
-    });
-    if (!response.ok) throw new Error('Failed to fetch');
-    const data = await response.json();
-    return data.categories.map((cat: any) => ({
-      ...cat,
-      icon: iconMap[cat.icon] || Code
+    const query = `
+      SELECT
+        id,
+        name,
+        slug,
+        icon,
+        job_count
+      FROM categories
+      ORDER BY job_count DESC
+    `;
+
+    const result = await pool.query(query);
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      title: row.name,
+      slug: row.slug,
+      icon: iconMap[row.icon] || Code,
+      count: `${row.job_count} jobs`,
     }));
   } catch (error) {
-    console.error('Error fetching categories:', error);
+    console.error("Error fetching categories:", error);
     return [];
   }
 }
 
 async function getFeaturedJobs() {
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/jobs`, {
-      cache: 'no-store'
-    });
-    if (!response.ok) throw new Error('Failed to fetch');
-    const data = await response.json();
-    return data.jobs.slice(0, 3); // Get first 3 jobs
+    const query = `
+      SELECT
+        j.id,
+        j.title,
+        j.description,
+        j.budget_min,
+        j.budget_max,
+        j.budget_type,
+        j.location,
+        j.duration,
+        j.created_at,
+        j.proposals_count,
+        c.name as category,
+        ARRAY_AGG(DISTINCT s.name) as skills
+      FROM jobs j
+      LEFT JOIN categories c ON j.category_id = c.id
+      LEFT JOIN job_skills js ON j.id = js.job_id
+      LEFT JOIN skills s ON js.skill_id = s.id
+      WHERE j.status = 'open'
+      GROUP BY j.id, c.name
+      ORDER BY j.created_at DESC
+      LIMIT 3
+    `;
+
+    const result = await pool.query(query);
+
+    return result.rows.map((row) => ({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      budget:
+        row.budget_type === "fixed"
+          ? `PKR ${row.budget_min.toLocaleString()} - ${row.budget_max.toLocaleString()}`
+          : `PKR ${row.budget_min.toLocaleString()}/hr`,
+      location: row.location,
+      duration: row.duration,
+      postedTime: getRelativeTime(row.created_at),
+      category: row.category,
+      proposals: row.proposals_count || 0,
+      skills: row.skills.filter(Boolean),
+    }));
   } catch (error) {
-    console.error('Error fetching jobs:', error);
+    console.error("Error fetching jobs:", error);
     return [];
   }
+}
+
+function getRelativeTime(date: Date): string {
+  const now = new Date();
+  const diff = now.getTime() - new Date(date).getTime();
+  const hours = Math.floor(diff / (1000 * 60 * 60));
+  const days = Math.floor(hours / 24);
+
+  if (hours < 1) return "Just now";
+  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
+  if (days === 1) return "1 day ago";
+  return `${days} days ago`;
 }
 
 export default async function Home() {
