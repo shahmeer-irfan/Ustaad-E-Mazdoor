@@ -12,7 +12,7 @@
 
 # testing
 /coverage
-
+*.pem
 # next.js
 /.next/
 /out/
