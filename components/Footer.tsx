@@ -27,7 +27,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/browse-jobs"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Find Work
                 </Link>
@@ -35,7 +35,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/how-it-works"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   How It Works
                 </Link>
@@ -43,7 +43,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/signup"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Sign Up
                 </Link>
@@ -58,7 +58,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/post-job"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Post a Job
                 </Link>
@@ -66,7 +66,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/freelancers"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Find Freelancers
                 </Link>
@@ -74,7 +74,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/how-it-works"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   How to Hire
                 </Link>
@@ -89,7 +89,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/about"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   About Us
                 </Link>
@@ -97,7 +97,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/contact"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Contact
                 </Link>
@@ -105,7 +105,7 @@ const Footer = () => {
               <li>
                 <Link
                   href="/privacy"
-                  className="text-primary-foreground/80 hover:text-white transition-colors"
+                  className="text-primary-foreground/80 hover:text-white hover:underline hover:translate-x-1 inline-block transition-all duration-300"
                 >
                   Privacy Policy
                 </Link>
@@ -115,25 +115,25 @@ const Footer = () => {
             <div className="flex space-x-4">
               <a
                 href="#"
-                className="text-primary-foreground/80 hover:text-white transition-colors"
+                className="text-primary-foreground/80 hover:text-white hover:scale-125 transition-all duration-300"
               >
                 <Facebook className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-primary-foreground/80 hover:text-white transition-colors"
+                className="text-primary-foreground/80 hover:text-white hover:scale-125 transition-all duration-300"
               >
                 <Twitter className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-primary-foreground/80 hover:text-white transition-colors"
+                className="text-primary-foreground/80 hover:text-white hover:scale-125 transition-all duration-300"
               >
                 <Linkedin className="w-5 h-5" />
               </a>
               <a
                 href="#"
-                className="text-primary-foreground/80 hover:text-white transition-colors"
+                className="text-primary-foreground/80 hover:text-white hover:scale-125 transition-all duration-300"
               >
                 <Instagram className="w-5 h-5" />
               </a>

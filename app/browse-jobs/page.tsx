@@ -64,14 +64,14 @@ export default function BrowseJobsPage() {
           </p>
 
           {/* Search and Filters */}
-          <div className="bg-white rounded-lg p-4 shadow-lg">
+          <div className="bg-card rounded-lg p-4 shadow-lg border">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="md:col-span-2 relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
                 <Input
                   type="text"
                   placeholder="Search jobs..."
-                  className="pl-10"
+                  className="pl-10 bg-background"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -82,12 +82,18 @@ export default function BrowseJobsPage() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Categories</SelectItem>
-                  <SelectItem value="web-dev">Web Development</SelectItem>
-                  <SelectItem value="design">Graphic Design</SelectItem>
-                  <SelectItem value="video">Video Editing</SelectItem>
-                  <SelectItem value="writing">Content Writing</SelectItem>
-                  <SelectItem value="marketing">Digital Marketing</SelectItem>
-                  <SelectItem value="seo">SEO & Analytics</SelectItem>
+                  <SelectItem value="plumbing">🔧 Plumbing</SelectItem>
+                  <SelectItem value="carpentry">🪚 Carpentry</SelectItem>
+                  <SelectItem value="electrician">⚡ Electrician</SelectItem>
+                  <SelectItem value="painting">🎨 Painting</SelectItem>
+                  <SelectItem value="ac-refrigeration">❄️ AC & Refrigeration</SelectItem>
+                  <SelectItem value="construction">🏗️ Construction</SelectItem>
+                  <SelectItem value="cleaning">🧹 Cleaning</SelectItem>
+                  <SelectItem value="gardening">🌱 Gardening</SelectItem>
+                  <SelectItem value="tailoring">✂️ Tailoring</SelectItem>
+                  <SelectItem value="auto-mechanic">🔩 Auto Mechanic</SelectItem>
+                  <SelectItem value="welding">🔥 Welding</SelectItem>
+                  <SelectItem value="home-appliances">🔌 Home Appliances</SelectItem>
                 </SelectContent>
               </Select>
               <Select value={location} onValueChange={setLocation}>

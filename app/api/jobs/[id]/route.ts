@@ -75,19 +75,23 @@ export async function GET(
       description: job.description,
       longDescription: job.long_description,
       budget: job.budget_type === 'fixed'
-        ? `PKR ${job.budget_min.toLocaleString()} - ${job.budget_max.toLocaleString()}`
-        : `PKR ${job.budget_min.toLocaleString()}/hr`,
+        ? `PKR ${parseFloat(job.budget_min).toLocaleString()} - ${parseFloat(job.budget_max).toLocaleString()}`
+        : `PKR ${parseFloat(job.budget_min).toLocaleString()}/hr`,
       budgetType: job.budget_type === 'fixed' ? 'Fixed Price' : 'Hourly',
+      budgetMin: parseFloat(job.budget_min),
+      budgetMax: parseFloat(job.budget_max),
       location: job.location,
       postedTime: getRelativeTime(job.created_at),
       category: job.category_name,
       skillsRequired: job.skills_required || [],
       duration: job.duration,
       proposals: job.proposals_count || 0,
+      views: job.views_count || 0,
+      status: job.status,
       client: {
         name: job.company_name || job.client_name,
         rating: parseFloat(job.client_rating).toFixed(1),
-        reviews: parseInt(job.client_reviews),
+        reviews: parseInt(job.client_reviews) || 0,
         jobsPosted: job.jobs_posted || 0,
         hireRate: job.hire_rate ? `${job.hire_rate}%` : '0%',
         memberSince: new Date(job.created_at).getFullYear().toString(),
@@ -98,8 +102,8 @@ export async function GET(
       id: row.id,
       title: row.title,
       budget: row.budget_type === 'fixed'
-        ? `PKR ${row.budget_min.toLocaleString()} - ${row.budget_max.toLocaleString()}`
-        : `PKR ${row.budget_min.toLocaleString()}/hr`,
+        ? `PKR ${parseFloat(row.budget_min).toLocaleString()} - ${parseFloat(row.budget_max).toLocaleString()}`
+        : `PKR ${parseFloat(row.budget_min).toLocaleString()}/hr`,
       location: row.location,
       postedTime: getRelativeTime(row.created_at),
     }));

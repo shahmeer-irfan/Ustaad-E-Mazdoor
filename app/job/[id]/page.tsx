@@ -2,6 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import { toast } from "@/components/ui/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -9,6 +10,7 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ProposalDialog } from "@/components/ProposalDialog";
+import { ReviewDialog } from "@/components/ReviewDialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { InlineLoader, FullPageLoader } from "@/components/Loader";
 import Link from "next/link";
@@ -38,6 +40,8 @@ export default function JobDetailPage({
   const [proposals, setProposals] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [proposalDialogOpen, setProposalDialogOpen] = useState(false);
+  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
+  const [selectedFreelancer, setSelectedFreelancer] = useState<{ id: string; name: string } | null>(null);
   const [updatingProposal, setUpdatingProposal] = useState<string | null>(null);
 
   const userRole = user?.unsafeMetadata?.role as string | undefined;
@@ -46,10 +50,13 @@ export default function JobDetailPage({
 
   useEffect(() => {
     fetchJobDetails();
-    if (isClient) {
+  }, [id]);
+
+  useEffect(() => {
+    if (isClient && job) {
       fetchProposals();
     }
-  }, [id, isClient]);
+  }, [id, isClient, job?.id]);
 
   const fetchJobDetails = async () => {
     try {
@@ -71,17 +78,21 @@ export default function JobDetailPage({
       if (response.ok) {
         const data = await response.json();
         setProposals(data.proposals || []);
+      } else if (response.status === 404) {
+        // Profile not found - user might not be synced yet
+        console.log('Profile not found - proposals cannot be loaded');
+        setProposals([]);
+      } else {
+        console.error('Failed to fetch proposals:', response.status);
+        setProposals([]);
       }
     } catch (error) {
       console.error('Failed to fetch proposals:', error);
+      setProposals([]);
     }
   };
 
   const handleProposalAction = async (proposalId: string, status: 'accepted' | 'rejected') => {
-    if (!confirm(`Are you sure you want to ${status === 'accepted' ? 'accept' : 'reject'} this proposal?`)) {
-      return;
-    }
-
     setUpdatingProposal(proposalId);
     try {
       const response = await fetch(`/api/proposals/${proposalId}`, {
@@ -95,12 +106,19 @@ export default function JobDetailPage({
         throw new Error(error.error || 'Failed to update proposal');
       }
 
-      alert(`Proposal ${status} successfully!`);
+      toast({
+        title: "Success!",
+        description: `Proposal ${status} successfully!`,
+      });
       fetchProposals();
       fetchJobDetails(); // Refresh job to update proposal count and status
     } catch (error: any) {
       console.error('Failed to update proposal:', error);
-      alert(error.message || 'Failed to update proposal');
+      toast({
+        title: "Error",
+        description: error.message || 'Failed to update proposal',
+        variant: "destructive",
+      });
     } finally {
       setUpdatingProposal(null);
     }
@@ -145,30 +163,30 @@ export default function JobDetailPage({
               <div className="flex items-start justify-between gap-4 mb-6">
                 <div className="flex-1">
                   <Badge variant="secondary" className="mb-3">
-                    {job.category_name}
+                    {job.category}
                   </Badge>
                   <h1 className="text-3xl font-bold mb-4">{job.title}</h1>
                   <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1.5">
                       <Clock className="w-4 h-4" />
-                      <span>Posted {new Date(job.created_at).toLocaleDateString()}</span>
+                      <span>Posted {job.postedTime}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <MapPin className="w-4 h-4" />
-                      <span>{job.location}</span>
+                      <span className="capitalize">{job.location}</span>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Briefcase className="w-4 h-4" />
-                      <span>{job.project_duration}</span>
+                      <span>{job.duration}</span>
                     </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button variant="outline" size="icon">
-                    <Bookmark className="w-5 h-5" />
+                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
+                    <Bookmark className="w-5 h-5 hover:text-primary transition-colors duration-200" />
                   </Button>
-                  <Button variant="outline" size="icon">
-                    <Share2 className="w-5 h-5" />
+                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
+                    <Share2 className="w-5 h-5 hover:text-primary transition-colors duration-200" />
                   </Button>
                 </div>
               </div>
@@ -176,17 +194,17 @@ export default function JobDetailPage({
               <div className="flex items-center justify-between py-4 border-y">
                 <div>
                   <div className="text-sm text-muted-foreground mb-1">
-                    {job.budget_type === 'fixed' ? 'Fixed Price' : 'Hourly Rate'}
+                    {job.budgetType}
                   </div>
                   <div className="text-2xl font-bold">
-                    PKR {job.budget_min?.toLocaleString() || '0'} - {job.budget_max?.toLocaleString() || '0'}
+                    {job.budget}
                   </div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-muted-foreground mb-1">
                     Proposals
                   </div>
-                  <div className="text-2xl font-bold">{job.proposal_count || 0}</div>
+                  <div className="text-2xl font-bold">{job.proposals || 0}</div>
                 </div>
               </div>
             </Card>
@@ -212,16 +230,18 @@ export default function JobDetailPage({
                 </Card>
 
                 {/* Skills Required */}
-                <Card className="p-8">
-                  <h2 className="text-2xl font-bold mb-4">Skills Required</h2>
-                  <div className="flex flex-wrap gap-2">
-                    {job.skills?.map((skill: string) => (
-                      <Badge key={skill} variant="outline" className="px-3 py-1">
-                        {skill}
-                      </Badge>
-                    ))}
-                  </div>
-                </Card>
+                {job.skillsRequired && job.skillsRequired.length > 0 && (
+                  <Card className="p-8">
+                    <h2 className="text-2xl font-bold mb-4">Skills Required</h2>
+                    <div className="flex flex-wrap gap-2">
+                      {job.skillsRequired.map((skill: string, index: number) => (
+                        <Badge key={index} variant="outline" className="px-3 py-1">
+                          {skill}
+                        </Badge>
+                      ))}
+                    </div>
+                  </Card>
+                )}
 
                 {/* Similar Jobs */}
                 <Card className="p-8">
@@ -235,14 +255,12 @@ export default function JobDetailPage({
                           className="block p-4 border rounded-lg hover:border-primary transition-colors"
                         >
                           <h3 className="font-semibold mb-2">{similarJob.title}</h3>
-                          <p className="text-sm text-muted-foreground line-clamp-2 mb-2">
-                            {similarJob.description}
-                          </p>
                           <div className="flex items-center gap-4 text-sm text-muted-foreground">
                             <span className="font-semibold text-foreground">
-                              PKR {similarJob.budget_min?.toLocaleString() || '0'} - {similarJob.budget_max?.toLocaleString() || '0'}
+                              {similarJob.budget}
                             </span>
-                            <span>{similarJob.location}</span>
+                            <span className="capitalize">{similarJob.location}</span>
+                            <span>{similarJob.postedTime}</span>
                           </div>
                         </Link>
                       ))
@@ -288,15 +306,17 @@ export default function JobDetailPage({
                                     <div className="flex items-center gap-1">
                                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                                       <span className="font-semibold">
-                                        {proposal.avg_rating?.toFixed(1) || 'N/A'}
+                                        {proposal.avg_rating ? parseFloat(proposal.avg_rating).toFixed(1) : 'N/A'}
                                       </span>
                                       <span className="text-muted-foreground">
                                         ({proposal.review_count || 0})
                                       </span>
                                     </div>
-                                    <span className="text-muted-foreground">
-                                      {proposal.success_rate}% success rate
-                                    </span>
+                                    {proposal.success_rate !== null && proposal.success_rate !== undefined && (
+                                      <span className="text-muted-foreground">
+                                        {proposal.success_rate}% success rate
+                                      </span>
+                                    )}
                                   </div>
                                 </div>
                               </div>
@@ -347,7 +367,7 @@ export default function JobDetailPage({
                                 <Button
                                   onClick={() => handleProposalAction(proposal.id, 'accepted')}
                                   disabled={updatingProposal === proposal.id}
-                                  className="bg-green-600 hover:bg-green-700"
+                                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200"
                                 >
                                   <CheckCircle className="w-4 h-4 mr-2" />
                                   Accept Proposal
@@ -356,9 +376,30 @@ export default function JobDetailPage({
                                   onClick={() => handleProposalAction(proposal.id, 'rejected')}
                                   disabled={updatingProposal === proposal.id}
                                   variant="destructive"
+                                  className="hover:scale-105 transition-all duration-200"
                                 >
                                   <XCircle className="w-4 h-4 mr-2" />
                                   Reject
+                                </Button>
+                              </div>
+                            )}
+
+                            {/* Rate Freelancer Button for Completed Jobs */}
+                            {proposal.status === 'accepted' && job.status === 'completed' && (
+                              <div className="pt-2">
+                                <Button
+                                  onClick={() => {
+                                    setSelectedFreelancer({
+                                      id: proposal.freelancer_id,
+                                      name: proposal.freelancer_name
+                                    });
+                                    setReviewDialogOpen(true);
+                                  }}
+                                  variant="outline"
+                                  className="hover:scale-105 transition-all duration-200 hover:bg-primary/10"
+                                >
+                                  <Star className="w-4 h-4 mr-2" />
+                                  Rate Freelancer
                                 </Button>
                               </div>
                             )}
@@ -403,16 +444,16 @@ export default function JobDetailPage({
                 <div className="flex items-start gap-3">
                   <Avatar className="w-12 h-12">
                     <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                      {job.client_name?.charAt(0) || 'C'}
+                      {job.client?.name?.charAt(0) || 'C'}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <div className="font-semibold">{job.client_name || 'Client'}</div>
+                    <div className="font-semibold">{job.client?.name || 'Client'}</div>
                     <div className="flex items-center gap-1 text-sm">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{job.client_rating?.toFixed(1) || 'N/A'}</span>
+                      <span className="font-semibold">{job.client?.rating || 'N/A'}</span>
                       <span className="text-muted-foreground">
-                        ({job.client_reviews || 0} reviews)
+                        ({job.client?.reviews || 0} reviews)
                       </span>
                     </div>
                   </div>
@@ -421,11 +462,15 @@ export default function JobDetailPage({
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Jobs Posted</span>
-                    <span className="font-semibold">{job.client_jobs_posted || 0}</span>
+                    <span className="font-semibold">{job.client?.jobsPosted || 0}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Hire Rate</span>
+                    <span className="font-semibold">{job.client?.hireRate || '0%'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Location</span>
-                    <span className="font-semibold">{job.location}</span>
+                    <span className="font-semibold capitalize">{job.location}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Status</span>
@@ -441,15 +486,15 @@ export default function JobDetailPage({
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Proposals</span>
-                  <span className="font-semibold">{job.proposal_count || 0}</span>
+                  <span className="font-semibold">{job.proposals || 0}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Posted On</span>
-                  <span className="font-semibold">{new Date(job.created_at).toLocaleDateString()}</span>
+                  <span className="text-muted-foreground">Posted</span>
+                  <span className="font-semibold">{job.postedTime}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Project Duration</span>
-                  <span className="font-semibold">{job.project_duration}</span>
+                  <span className="text-muted-foreground">Duration</span>
+                  <span className="font-semibold">{job.duration}</span>
                 </div>
               </div>
             </Card>
@@ -464,11 +509,23 @@ export default function JobDetailPage({
         jobId={id}
         jobTitle={job.title}
         budgetRange={
-          job.budget_min && job.budget_max
-            ? { min: job.budget_min, max: job.budget_max }
+          job.budgetMin && job.budgetMax
+            ? { min: job.budgetMin, max: job.budgetMax }
             : undefined
         }
       />
+
+      {/* Review Dialog */}
+      {selectedFreelancer && (
+        <ReviewDialog
+          open={reviewDialogOpen}
+          onOpenChange={setReviewDialogOpen}
+          jobId={id}
+          freelancerId={selectedFreelancer.id}
+          freelancerName={selectedFreelancer.name}
+          jobTitle={job.title}
+        />
+      )}
 
       <Footer />
     </div>

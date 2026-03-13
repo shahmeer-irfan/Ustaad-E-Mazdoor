@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 import {
   Dialog,
   DialogContent,
@@ -65,7 +66,10 @@ export function ProposalDialog({
         throw new Error(error.error || "Failed to submit proposal");
       }
 
-      alert("Proposal submitted successfully!");
+      toast({
+        title: "Success!",
+        description: "Proposal submitted successfully!",
+      });
       onOpenChange(false);
       router.refresh();
       
@@ -77,7 +81,11 @@ export function ProposalDialog({
       });
     } catch (error: any) {
       console.error("Failed to submit proposal:", error);
-      alert(error.message || "Failed to submit proposal. Please try again.");
+      toast({
+        title: "Error",
+        description: error.message || "Failed to submit proposal. Please try again.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -85,7 +93,7 @@ export function ProposalDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-background/100 backdrop-blur-none">
         <DialogHeader>
           <DialogTitle>Submit Proposal</DialogTitle>
           <DialogDescription>
