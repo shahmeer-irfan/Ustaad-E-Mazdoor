@@ -27,4 +27,4 @@ jobs:
             npm install --legacy-peer-deps
             npm run build
             pm2 restart ustaad
-            echo "Deployment successful"
+            echo "Deployment success"
