@@ -2,134 +2,103 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    --brand-purple: #7c3aed;
+    --brand-purple-light: #a855f7;
+    --brand-purple-dark: #5b21b6;
+    --brand-purple-soft: #ede9fe;
 
-    --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --white: #ffffff;
+    --off-white: #fafafa;
+    --surface: #f5f3ff;
+    --border: #e9d5ff;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --text-primary: #0f0a1e;
+    --text-secondary: #4b5563;
+    --text-muted: #9ca3af;
 
-    --primary: 262 83% 58%;
-    --primary-foreground: 0 0% 100%;
+    --success: #16a34a;
+    --warning: #d97706;
+    --error: #dc2626;
+    --info: #2563eb;
 
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
+    --background: var(--white);
+    --foreground: var(--text-primary);
 
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
+    --card: var(--white);
+    --card-foreground: var(--text-primary);
 
-    --accent: 25 95% 63%;
-    --accent-foreground: 0 0% 100%;
+    --popover: var(--white);
+    --popover-foreground: var(--text-primary);
 
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
+    --primary: var(--brand-purple);
+    --primary-foreground: var(--white);
 
-    --border: 240 6% 90%;
-    --input: 240 6% 90%;
-    --ring: 262 83% 58%;
+    --secondary: var(--surface);
+    --secondary-foreground: var(--text-primary);
+
+    --muted: var(--brand-purple-soft);
+    --muted-foreground: var(--text-secondary);
+
+    --accent: var(--brand-purple-soft);
+    --accent-foreground: var(--brand-purple-dark);
+
+    --destructive: var(--error);
+    --destructive-foreground: var(--white);
+
+    --input: var(--border);
+    --ring: var(--brand-purple);
 
     --radius: 0.75rem;
 
-    /* Modern Brand Colors */
-    --brand-purple: 262 83% 58%;
-    --brand-blue: 237 89% 62%;
-    --brand-pink: 340 82% 67%;
-    --brand-orange: 25 95% 63%;
-    --brand-yellow: 45 93% 68%;
-
-    /* Modern Gradients */
     --gradient-primary: linear-gradient(
       135deg,
-      hsl(262 83% 58%) 0%,
-      hsl(237 89% 62%) 50%,
-      hsl(25 95% 63%) 100%
+      var(--brand-purple-dark) 0%,
+      var(--brand-purple) 50%,
+      var(--brand-purple-light) 100%
     );
     --gradient-hero: linear-gradient(
       120deg,
-      hsl(262 83% 58%) 0%,
-      hsl(340 82% 67%) 50%,
-      hsl(25 95% 63%) 100%
+      var(--brand-purple-dark) 0%,
+      var(--brand-purple-light) 100%
     );
     --gradient-accent: linear-gradient(
       135deg,
-      hsl(25 95% 63%) 0%,
-      hsl(45 93% 68%) 100%
+      var(--brand-purple) 0%,
+      var(--brand-purple-dark) 100%
     );
     --gradient-card: linear-gradient(
       135deg,
-      hsl(262 83% 58% / 0.05) 0%,
-      hsl(25 95% 63% / 0.05) 100%
+      color-mix(in srgb, var(--brand-purple) 7%, transparent) 0%,
+      color-mix(in srgb, var(--brand-purple-light) 6%, transparent) 100%
     );
 
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: var(--white);
+    --sidebar-foreground: var(--text-primary);
+    --sidebar-primary: var(--brand-purple);
+    --sidebar-primary-foreground: var(--white);
+    --sidebar-accent: var(--brand-purple-soft);
+    --sidebar-accent-foreground: var(--brand-purple-dark);
+    --sidebar-border: var(--border);
+    --sidebar-ring: var(--brand-purple-light);
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --background: 240 10% 8%;
-      --foreground: 0 0% 98%;
-
-      --card: 240 10% 10%;
-      --card-foreground: 0 0% 98%;
-
-      --popover: 240 10% 10%;
-      --popover-foreground: 0 0% 98%;
-
-      --primary: 262 83% 58%;
-      --primary-foreground: 0 0% 100%;
-
-      --secondary: 240 4% 16%;
-      --secondary-foreground: 0 0% 98%;
-
-      --muted: 240 4% 16%;
-      --muted-foreground: 240 5% 65%;
-
-      --accent: 25 95% 63%;
-      --accent-foreground: 0 0% 100%;
-
-      --destructive: 0 63% 31%;
-      --destructive-foreground: 0 0% 98%;
-
-      --border: 240 4% 16%;
-      --input: 240 4% 16%;
-      --ring: 262 83% 58%;
-      --sidebar-background: 240 5.9% 10%;
-      --sidebar-foreground: 240 4.8% 95.9%;
-      --sidebar-primary: 224.3 76.3% 48%;
-      --sidebar-primary-foreground: 0 0% 100%;
-      --sidebar-accent: 240 3.7% 15.9%;
-      --sidebar-accent-foreground: 240 4.8% 95.9%;
-      --sidebar-border: 240 3.7% 15.9%;
-      --sidebar-ring: 217.2 91.2% 59.8%;
-    }
-  }
 }
 
 @layer base {
   * {
-    border-color: hsl(var(--border));
+    border-color: var(--border);
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    background-color: hsl(var(--background));
-    color: hsl(var(--foreground));
-    font-family: var(
-      --font-sans,
-      -apple-system,
-      BlinkMacSystemFont,
-      "Segoe UI",
-      Roboto,
-      sans-serif
-    );
+    background-color: #ffffff;
+    color: #0f0a1e;
+    font-family: var(--font-poppins), sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -142,6 +111,48 @@
   h6 {
     font-weight: 700;
     letter-spacing: -0.02em;
+    color: var(--text-primary);
+  }
+
+  h1 {
+    font-size: clamp(2.5rem, 4vw, 3rem);
+  }
+
+  h2 {
+    font-size: 2rem;
+  }
+
+  h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+
+  h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  ::selection {
+    background: var(--brand-purple);
+    color: var(--white);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--brand-purple);
+    outline-offset: 2px;
+  }
+
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--surface);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--brand-purple-light);
+    border-radius: 3px;
   }
 }
 
@@ -167,6 +178,37 @@
     animation: fadeIn 0.6s ease-out;
   }
 
+  .text-display {
+    font-size: clamp(4rem, 9vw, 5rem);
+    font-weight: 800;
+    line-height: 1.04;
+    letter-spacing: -0.03em;
+  }
+
+  .text-body-lg {
+    font-size: 1.125rem;
+    font-weight: 400;
+    line-height: 1.65;
+  }
+
+  .text-body {
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .text-small {
+    font-size: 0.875rem;
+    font-weight: 400;
+  }
+
+  .text-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -182,7 +224,7 @@
   .box1,
   .box2,
   .box3 {
-    border: 4px solid hsl(var(--primary));
+    border: 4px solid var(--primary);
     box-sizing: border-box;
     position: absolute;
     display: block;
