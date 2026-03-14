@@ -17,12 +17,12 @@ export default function SignupPage() {
   const [userType, setUserType] = useState<"freelancer" | "client">("freelancer");
   const router = useRouter();
   const { toast } = useToast();
-  const { isLoaded, signUp } = useSignUp();
+  const { fetchStatus, signUp } = useSignUp();
 
   const handleRoleSelection = async (role: "freelancer" | "client") => {
     setUserType(role);
     
-    if (!isLoaded) return;
+    if (fetchStatus !== "idle") return;
 
     try {
       // Store role in public metadata for later use

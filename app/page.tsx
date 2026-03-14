@@ -18,6 +18,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 
+export const dynamic = "force-dynamic";
+
 const iconMap: Record<string, any> = {
   Code,
   Paintbrush,
