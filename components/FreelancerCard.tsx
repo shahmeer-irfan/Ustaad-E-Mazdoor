@@ -1,6 +1,5 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Star, MapPin } from "lucide-react";
 import Link from "next/link";
 
@@ -28,59 +27,64 @@ const FreelancerCard = ({
   avatar,
 }: FreelancerCardProps) => {
   return (
-    <Card className="p-6 hover:shadow-xl transition-all duration-300 cursor-pointer hover:scale-[1.02] hover:-translate-y-1 hover:border-primary/50 border-2">
+    <Card className="group h-full cursor-pointer rounded-2xl border border-[#E9D5FF] bg-white p-5 flex flex-col gap-4 transition-all duration-200 ease-out hover:border-[#7C3AED] hover:shadow-[0_8px_30px_rgba(124,58,237,0.12)] hover:-translate-y-1">
       <div className="space-y-4">
         <div className="flex items-start space-x-4">
-          <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center text-primary text-2xl font-bold flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+          <div className="h-16 w-16 shrink-0 rounded-full ring-2 ring-[#A855F7]">
             {avatar ? (
               <img
                 src={avatar}
                 alt={name}
-                className="w-full h-full rounded-full object-cover"
+                className="h-full w-full rounded-full object-cover"
               />
             ) : (
-              name.charAt(0)
+              <div className="flex h-full w-full items-center justify-center rounded-full bg-[#EDE9FE] text-2xl font-bold text-[#7C3AED]">
+                {name.charAt(0)}
+              </div>
             )}
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-lg truncate hover:text-primary transition-colors">{name}</h3>
-            <p className="text-muted-foreground text-sm">{title}</p>
-            <div className="flex items-center mt-1 text-sm">
-              <MapPin className="w-4 h-4 mr-1 text-muted-foreground" />
-              <span className="text-muted-foreground">{location}</span>
+            <h3 className="truncate text-lg font-bold text-[#0F0A1E]">{name}</h3>
+            <p className="text-sm text-[#4B5563]">{title}</p>
+            <div className="mt-1 flex items-center text-sm">
+              <MapPin className="mr-1 h-4 w-4 text-[#9CA3AF]" />
+              <span className="text-[#4B5563]">{location}</span>
             </div>
           </div>
         </div>
 
         <div className="flex items-center space-x-2">
           <div className="flex items-center">
-            <Star className="w-4 h-4 fill-yellow-400 text-yellow-400 mr-1" />
-            <span className="font-semibold">{rating}</span>
+            <Star className="mr-1 h-4 w-4 fill-[#7C3AED] text-[#7C3AED]" />
+            <span className="font-semibold text-[#0F0A1E]">{rating}</span>
           </div>
-          <span className="text-muted-foreground text-sm">
+          <span className="text-sm text-[#4B5563]">
             ({reviews} reviews)
           </span>
         </div>
 
         <div className="flex flex-wrap gap-2">
-          {skills.slice(0, 3).map((skill) => (
-            <Badge key={skill} variant="outline" className="hover:bg-primary/10 transition-colors">
+          {skills.slice(0, 3).map((skill: string) => (
+            <Badge key={skill} className="rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#5B21B6]">
               {skill}
             </Badge>
           ))}
           {skills.length > 3 && (
-            <Badge variant="outline" className="hover:bg-primary/10 transition-colors">+{skills.length - 3} more</Badge>
+            <Badge className="rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#5B21B6]">+{skills.length - 3} more</Badge>
           )}
         </div>
 
-        <div className="flex items-center justify-between pt-4 border-t">
+        <div className="flex items-center justify-between border-t border-[#F3F4F6] pt-4">
           <div>
-            <p className="text-sm text-muted-foreground">Starting at</p>
-            <p className="font-semibold text-lg">{hourlyRate}/hr</p>
+            <p className="text-sm text-[#4B5563]">Starting at</p>
+            <p className="text-lg font-bold text-[#7C3AED]">{hourlyRate}/hr</p>
           </div>
-          <Button asChild className="hover:scale-105 transition-transform">
-            <Link href={`/freelancer/${id}`}>View Profile</Link>
-          </Button>
+          <Link
+            href={`/freelancer/${id}`}
+            className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#5B21B6] hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)] active:scale-95"
+          >
+            Hire
+          </Link>
         </div>
       </div>
     </Card>
