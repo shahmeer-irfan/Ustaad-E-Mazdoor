@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, X, LogOut, User as UserIcon, Briefcase, FileText } from "lucide-react";
+import { Menu, X, LogOut, User as UserIcon, Briefcase, FileText, Sparkles } from "lucide-react";
 import { useUser, useClerk } from "@clerk/nextjs";
 import {
   DropdownMenu,
@@ -28,47 +28,30 @@ const Navigation = () => {
     await signOut();
   };
 
+  const navLinkClasses = (isActive: boolean) =>
+    `px-1 text-sm transition-colors duration-200 font-medium ${
+      isActive
+        ? "text-[#7C3AED] font-semibold border-b-2 border-[#7C3AED] pb-1"
+        : "text-[#4B5563] hover:text-[#7C3AED]"
+    }`;
+
   return (
-    <nav className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+    <header className="sticky top-0 z-50 bg-white border-b border-[#E9D5FF] shadow-[0_1px_8px_rgba(124,58,237,0.06)]">
       <div className="container mx-auto px-4 md:px-6">
         <div className="flex items-center justify-between h-20">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-primary flex items-center justify-center transition-transform group-hover:scale-105">
-              <span className="text-white font-black text-xl">U</span>
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-(--brand-purple-soft) transition-transform duration-200 group-hover:scale-105">
+              <Sparkles className="h-5 w-5 text-(--brand-purple)" strokeWidth={2.5} />
             </div>
-            <span className="text-2xl font-black tracking-tight">Ustaad</span>
+            <span className="text-2xl font-bold tracking-tight text-(--brand-purple-dark)">Ustaad</span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
-            <Button 
-              variant="ghost" 
-              asChild 
-              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
-                pathname === '/browse-jobs' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
-              }`}
-            >
-              <Link href="/browse-jobs">Find Work</Link>
-            </Button>
-            <Button 
-              variant="ghost" 
-              asChild 
-              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
-                pathname === '/freelancers' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
-              }`}
-            >
-              <Link href="/freelancers">Find Talent</Link>
-            </Button>
-            <Button 
-              variant="ghost" 
-              asChild 
-              className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
-                pathname === '/how-it-works' ? 'text-primary bg-primary/5 border-b-2 border-primary' : ''
-              }`}
-            >
-              <Link href="/how-it-works">How It Works</Link>
-            </Button>
+          <div className="hidden md:flex items-center gap-6">
+            <Link href="/browse-jobs" className={navLinkClasses(pathname === "/browse-jobs")}>Find Work</Link>
+            <Link href="/freelancers" className={navLinkClasses(pathname === "/freelancers")}>Find Talent</Link>
+            <Link href="/how-it-works" className={navLinkClasses(pathname === "/how-it-works")}>How It Works</Link>
           </div>
 
           {/* Desktop Actions */}
@@ -78,38 +61,26 @@ const Navigation = () => {
             ) : user ? (
               <>
                 {userRole === 'freelancer' ? (
-                  <Button 
-                    variant="ghost" 
-                    asChild 
-                    className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
-                      pathname === '/browse-jobs' ? 'text-primary bg-primary/5' : ''
-                    }`}
-                  >
+                  <Button variant="ghost" asChild className={navLinkClasses(pathname === "/browse-jobs")}>
                     <Link href="/browse-jobs">Browse Jobs</Link>
                   </Button>
                 ) : (
-                  <Button 
-                    variant="ghost" 
-                    asChild 
-                    className={`font-medium transition-all duration-300 hover:scale-105 hover:bg-primary/10 ${
-                      pathname === '/post-job' ? 'text-primary bg-primary/5' : ''
-                    }`}
-                  >
+                  <Button variant="ghost" asChild className={navLinkClasses(pathname === "/post-job")}>
                     <Link href="/post-job">Post Job</Link>
                   </Button>
                 )}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" className="relative h-10 w-10 rounded-full transition-all duration-300 hover:scale-110 hover:ring-2 hover:ring-primary/50">
+                    <Button variant="ghost" className="relative h-10 w-10 rounded-full transition-all duration-200 hover:scale-105 hover:ring-2 hover:ring-(--brand-purple-light)">
                       <Avatar className="h-10 w-10">
                         <AvatarImage src={user.imageUrl} alt={user.fullName || ""} />
-                        <AvatarFallback className="bg-primary/10 text-primary font-bold">
+                        <AvatarFallback className="bg-(--brand-purple-soft) text-(--brand-purple) font-bold">
                           {user.firstName?.charAt(0) || user.emailAddresses[0].emailAddress.charAt(0).toUpperCase()}
                         </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuContent className="w-56 border-(--border)" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                       <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">
@@ -158,12 +129,12 @@ const Navigation = () => {
               </>
             ) : (
               <>
-                <Button variant="ghost" asChild className="font-medium">
+                <Button variant="ghost" asChild className="text-[#7C3AED] font-semibold hover:text-[#5B21B6] transition-colors duration-200">
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button
                   asChild
-                  className="rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
+                  className="px-5 py-2 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-full transition-all duration-200 hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)]"
                 >
                   <Link href="/signup">Sign Up</Link>
                 </Button>
@@ -173,7 +144,7 @@ const Navigation = () => {
 
           {/* Mobile Menu Button */}
           <button
-            className="md:hidden p-2 hover:bg-muted rounded-lg transition-colors"
+            className="md:hidden rounded-lg p-2 text-(--text-primary) transition-colors hover:bg-(--brand-purple-soft)"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             aria-label="Toggle menu"
           >
@@ -187,77 +158,79 @@ const Navigation = () => {
 
         {/* Mobile Menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden py-6 space-y-1 border-t border-border/50 animate-fade-in">
-            <Link
-              href="/browse-jobs"
-              className="block py-3 px-4 rounded-lg text-foreground hover:bg-muted transition-colors font-medium"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Find Work
-            </Link>
-            <Link
-              href="/freelancers"
-              className="block py-3 px-4 rounded-lg text-foreground hover:bg-muted transition-colors font-medium"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Find Talent
-            </Link>
-            <Link
-              href="/how-it-works"
-              className="block py-3 px-4 rounded-lg text-foreground hover:bg-muted transition-colors font-medium"
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              How It Works
-            </Link>
-            <div className="pt-4 space-y-2">
-              {user ? (
-                <>
-                  <Button variant="ghost" asChild className="w-full font-medium justify-start">
-                    <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
-                      <UserIcon className="mr-2 h-4 w-4" />
-                      Dashboard
-                    </Link>
-                  </Button>
-                  <Button variant="ghost" asChild className="w-full font-medium justify-start">
-                    <Link href="/post-job" onClick={() => setMobileMenuOpen(false)}>
-                      <Briefcase className="mr-2 h-4 w-4" />
-                      Post Job
-                    </Link>
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full font-medium justify-start"
-                    onClick={() => {
-                      handleSignOut();
-                      setMobileMenuOpen(false);
-                    }}
-                  >
-                    <LogOut className="mr-2 h-4 w-4" />
-                    Log Out
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button variant="ghost" asChild className="w-full font-medium">
-                    <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
-                      Login
-                    </Link>
-                  </Button>
-                  <Button
-                    asChild
-                    className="w-full rounded-full bg-gradient-accent hover:opacity-90 transition-opacity font-semibold"
-                  >
-                    <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                      Sign Up
-                    </Link>
-                  </Button>
-                </>
-              )}
+          <div className="overflow-hidden md:hidden animate-fade-in">
+            <div className="space-y-1 border-t border-(--border) py-6">
+                <Link
+                  href="/browse-jobs"
+                  className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Find Work
+                </Link>
+                <Link
+                  href="/freelancers"
+                  className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Find Talent
+                </Link>
+                <Link
+                  href="/how-it-works"
+                  className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  How It Works
+                </Link>
+                <div className="space-y-2 pt-4">
+                  {user ? (
+                    <>
+                      <Button variant="ghost" asChild className="w-full justify-start font-medium text-(--text-secondary) hover:text-(--brand-purple)">
+                        <Link href="/dashboard" onClick={() => setMobileMenuOpen(false)}>
+                          <UserIcon className="mr-2 h-4 w-4" />
+                          Dashboard
+                        </Link>
+                      </Button>
+                      <Button variant="ghost" asChild className="w-full justify-start font-medium text-(--text-secondary) hover:text-(--brand-purple)">
+                        <Link href="/post-job" onClick={() => setMobileMenuOpen(false)}>
+                          <Briefcase className="mr-2 h-4 w-4" />
+                          Post Job
+                        </Link>
+                      </Button>
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start border-(--border) font-medium text-(--text-secondary)"
+                        onClick={() => {
+                          handleSignOut();
+                          setMobileMenuOpen(false);
+                        }}
+                      >
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Log Out
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button variant="ghost" asChild className="w-full text-[#7C3AED] font-semibold hover:text-[#5B21B6] transition-colors duration-200">
+                        <Link href="/login" onClick={() => setMobileMenuOpen(false)}>
+                          Login
+                        </Link>
+                      </Button>
+                      <Button
+                        asChild
+                        className="px-5 py-2 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-full transition-all duration-200 hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)]"
+                      >
+                        <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
+                          Sign Up
+                        </Link>
+                      </Button>
+                    </>
+                  )}
+                </div>
             </div>
           </div>
         )}
       </div>
-    </nav>
+    </header>
   );
 };
 
