@@ -80,11 +80,10 @@ export default function FreelancersPage() {
       <div className="py-2">
         <div className="w-full">
           <h1 className="text-4xl font-bold text-[#0F0A1E] md:text-5xl">
-            Find Talented Freelancers
+            Hunar Wale Log
           </h1>
           <p className="mb-8 mt-4 text-lg text-[#4B5563]">
-            Connect with skilled professionals ready to bring your projects to
-            life
+            Verified professionals - seedha hire karo
           </p>
 
           {/* Search and Filters */}
@@ -137,7 +136,7 @@ export default function FreelancersPage() {
             <div className="w-10 h-1 rounded-full bg-[#7C3AED]" />
           </div>
           <span className="text-sm text-[#6B7280] bg-[#F5F3FF] px-4 py-2 rounded-full border border-[#E9D5FF]">
-            {freelancers.length} freelancers found
+            {freelancers.length} freelancers mil gaye
           </span>
         </div>
 
@@ -157,7 +156,7 @@ export default function FreelancersPage() {
 
         {freelancers.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[#6B7280]">No freelancers found. Try adjusting your filters.</p>
+            <p className="text-[#6B7280]">Koi freelancer nahi mila - filters change karo</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

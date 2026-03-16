@@ -14,10 +14,10 @@ export default function LoginPage() {
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md text-center">
           <h1 className="text-4xl font-black tracking-tight mb-4">
-            Welcome Back
+            Wapas Aaiye!
           </h1>
           <p className="text-muted-foreground mb-8">
-            Sign in to continue to your account
+            Signup se kaam dhundna shuru karo
           </p>
           
           <Button 
@@ -26,15 +26,15 @@ export default function LoginPage() {
             asChild
           >
             <Link href="/sign-in">
-              Sign In
+              Login Karo
               <ArrowRight className="ml-2 w-5 h-5" />
             </Link>
           </Button>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
-            Don't have an account?{" "}
+            Pehle se account hai?{" "}
             <Link href="/signup" className="text-primary font-semibold hover:underline">
-              Sign up
+              Login karo
             </Link>
           </p>
         </div>

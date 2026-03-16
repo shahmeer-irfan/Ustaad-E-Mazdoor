@@ -13,10 +13,10 @@ export default function SignInPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-black tracking-tight mb-2">
-              Welcome Back
+              Wapas Aaiye!
             </h1>
             <p className="text-muted-foreground">
-              Sign in to your account
+              Login Karo
             </p>
           </div>
           

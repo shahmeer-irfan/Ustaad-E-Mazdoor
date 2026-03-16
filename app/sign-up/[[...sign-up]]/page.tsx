@@ -17,10 +17,10 @@ export default function SignUpPage() {
         <div className="w-full max-w-md">
           <div className="text-center mb-8">
             <h1 className="text-3xl font-black tracking-tight mb-2">
-              Sign Up as {role === "freelancer" ? "Freelancer" : "Client"}
+              Ustaad Family mein Shaamil Ho!
             </h1>
             <p className="text-muted-foreground">
-              Create your account to get started
+              Free account banao aur kaam dhundna shuru karo
             </p>
           </div>
           

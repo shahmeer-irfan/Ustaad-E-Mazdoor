@@ -53,10 +53,10 @@ export default function SignupPage() {
               <Users className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight mb-4">
-              Join Ustaad E-Mazdoor
+              Ustaad Family mein Shaamil Ho!
             </h1>
             <p className="text-muted-foreground text-lg">
-              Choose how you want to get started
+              Free account banao aur kaam dhundna shuru karo
             </p>
           </div>
 
@@ -154,14 +154,14 @@ export default function SignupPage() {
               className="w-full text-lg h-14"
               onClick={handleContinue}
             >
-              Continue as {userType === "freelancer" ? "Freelancer" : "Client"}
+              Account Banao
               <ArrowRight className="ml-2 w-5 h-5" />
             </Button>
 
             <p className="text-center text-sm text-muted-foreground">
-              Already have an account?{" "}
+              Pehle se account hai? Login karo{" "}
               <Link href="/login" className="text-primary font-semibold hover:underline">
-                Sign in
+                Login karo
               </Link>
             </p>
           </div>

@@ -4,6 +4,9 @@ import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import CategoryCard from "@/components/CategoryCard";
 import JobCard from "@/components/JobCard";
+import FreelancerCard from "@/components/FreelancerCard";
+import Hero2 from "@/components/ui/hero-2";
+import AnimatedButton from "@/components/ui/animated-button";
 import pool from "@/lib/db";
 import {
   Code,
@@ -15,7 +18,7 @@ import {
   Search,
   UserPlus,
   Briefcase,
-  ArrowRight,
+  Sparkles,
 } from "lucide-react";
 
 export const dynamic = "force-dynamic";
@@ -112,123 +115,101 @@ function getRelativeTime(date: Date): string {
   const hours = Math.floor(diff / (1000 * 60 * 60));
   const days = Math.floor(hours / 24);
 
-  if (hours < 1) return "Just now";
-  if (hours < 24) return `${hours} hour${hours > 1 ? "s" : ""} ago`;
-  if (days === 1) return "1 day ago";
-  return `${days} days ago`;
+  if (hours < 1) return "Abhi";
+  if (hours < 24) return `${hours} ghantay pehle`;
+  if (days === 1) return "1 din pehle";
+  return `${days} din pehle`;
 }
 
 export default async function Home() {
   const categories = await getCategories();
   const featuredJobs = await getFeaturedJobs();
+  const topFreelancers = [
+    {
+      id: "top-1",
+      name: "Ahmed Raza",
+      title: "Master Electrician",
+      location: "Lahore",
+      rating: 4.9,
+      reviews: 178,
+      skills: ["Wiring", "Maintenance", "Installations"],
+      hourlyRate: "PKR 2,500",
+    },
+    {
+      id: "top-2",
+      name: "Sana Tariq",
+      title: "Interior Painter",
+      location: "Karachi",
+      rating: 4.8,
+      reviews: 126,
+      skills: ["Wall Finishing", "Texture", "Color Matching"],
+      hourlyRate: "PKR 2,000",
+    },
+    {
+      id: "top-3",
+      name: "Bilal Khan",
+      title: "Plumbing Specialist",
+      location: "Islamabad",
+      rating: 4.9,
+      reviews: 214,
+      skills: ["Repairs", "Fittings", "Leak Detection"],
+      hourlyRate: "PKR 2,800",
+    },
+  ];
 
   const howItWorks = [
     {
       icon: UserPlus,
-      title: "Create Your Profile",
+      title: "Account Banao",
       description:
-        "Sign up as a freelancer or client. Set up your profile in minutes.",
+        "Free mein sign up karo - sirf 2 minute lagte hain",
     },
     {
       icon: Search,
-      title: "Find Opportunities",
+      title: "Kaam Dhundo ya Post Karo",
       description:
-        "Browse jobs that match your skills or search for the perfect freelancer.",
+        "Apni zaroorat ke mutabiq kaam dhundo ya apna kaam post karo",
     },
     {
       icon: Briefcase,
-      title: "Start Working",
-      description: "Connect, collaborate, and get paid securely for your work.",
+      title: "Kaam Shuru Karo",
+      description: "Seedha baat karo, rate tay karo, aur kaam shuru karo. Itna simple.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <main className="min-h-screen bg-white text-(--text-primary)">
       <Navigation />
+      <Hero2 />
 
-      {/* Hero Section */}
-      <section className="relative overflow-hidden py-24 md:py-32 lg:py-40">
-        <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-4xl mx-auto text-center space-y-8">
-            <div className="space-y-4 animate-fade-in">
-              <h1 className="text-6xl md:text-8xl font-black tracking-tighter cursor-default">
-                <span className="inline-block hover:scale-105 transition-transform duration-300">
-                  Find & Hire
-                </span>
-                <br />
-                <span className="inline-block bg-gradient-to-r from-[hsl(262,83%,58%)] via-[hsl(237,89%,62%)] to-[hsl(25,95%,63%)] bg-clip-text text-transparent hover:scale-110 transition-transform duration-300 hover:drop-shadow-lg">
-                  Local Talent
-                </span>
-              </h1>
-              <p className="text-xl md:text-2xl text-muted-foreground font-light max-w-2xl mx-auto hover:text-foreground transition-colors duration-300">
-                Connect with talented Pakistani freelancers or discover
-                meaningful work in your community
-              </p>
+      {/* Stats Strip */}
+      <section className="bg-linear-to-r from-(--brand-purple-dark) to-(--brand-purple) py-6 text-white">
+        <div className="container mx-auto grid grid-cols-2 gap-6 px-4 text-center md:grid-cols-4">
+          {[
+            { value: "10,000+", label: "Registered Workers" },
+            { value: "500+", label: "Companies" },
+            { value: "50+", label: "Cities" },
+            { value: "98%", label: "Success Rate" },
+          ].map((item) => (
+            <div key={item.label} className="space-y-1">
+              <p className="text-3xl font-extrabold">{item.value}</p>
+              <p className="text-small text-white/85">{item.label}</p>
             </div>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button
-                size="lg"
-                asChild
-                className="text-lg px-10 py-6 h-auto rounded-full bg-gradient-accent hover:opacity-90 hover:scale-105 hover:shadow-2xl transition-all duration-300 transform"
-              >
-                <Link href="/browse-jobs" className="group">
-                  Find Work
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="text-lg px-10 py-6 h-auto rounded-full border-2 hover:border-primary hover:bg-primary/5 hover:scale-105 hover:shadow-xl transition-all duration-300 transform"
-              >
-                <Link href="/freelancers">Browse Talent</Link>
-              </Button>
-            </div>
-
-            <div className="flex flex-wrap gap-8 justify-center pt-12 text-center">
-              <div className="group cursor-default hover:scale-110 transition-transform duration-300">
-                <div className="text-4xl font-black bg-gradient-to-r from-[hsl(262,83%,58%)] via-[hsl(237,89%,62%)] to-[hsl(25,95%,63%)] bg-clip-text text-transparent inline-block group-hover:animate-pulse">
-                  10K+
-                </div>
-                <div className="text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">
-                  Active Freelancers
-                </div>
-              </div>
-              <div className="group cursor-default hover:scale-110 transition-transform duration-300">
-                <div className="text-4xl font-black bg-gradient-to-r from-[hsl(262,83%,58%)] via-[hsl(237,89%,62%)] to-[hsl(25,95%,63%)] bg-clip-text text-transparent inline-block group-hover:animate-pulse">
-                  5K+
-                </div>
-                <div className="text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">
-                  Jobs Posted
-                </div>
-              </div>
-              <div className="group cursor-default hover:scale-110 transition-transform duration-300">
-                <div className="text-4xl font-black bg-gradient-to-r from-[hsl(262,83%,58%)] via-[hsl(237,89%,62%)] to-[hsl(25,95%,63%)] bg-clip-text text-transparent inline-block group-hover:animate-pulse">
-                  98%
-                </div>
-                <div className="text-sm text-muted-foreground font-medium group-hover:text-foreground transition-colors">
-                  Success Rate
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
       </section>
 
       {/* Categories Section */}
-      <section className="py-20 bg-secondary/30 transition-colors duration-500">
+      <section className="py-20">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-4 hover:text-primary transition-colors cursor-default">
-              Browse by Category
-            </h2>
-            <p className="text-xl text-muted-foreground">
-              Find the perfect freelancer for your project
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl font-bold text-(--text-primary)">Browse by Category</h2>
+            <div className="mx-auto mt-3 h-1 w-24 rounded-full bg-(--brand-purple)" />
+            <p className="mt-4 text-body-lg text-(--text-secondary)">
+              Find the right worker for your project needs
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {categories.map((category: { title: string; icon: any; count: string; slug: string }) => (
               <CategoryCard key={category.title} {...category} />
             ))}
@@ -237,26 +218,18 @@ export default async function Home() {
       </section>
 
       {/* Featured Jobs */}
-      <section className="py-20">
+      <section className="bg-(--surface) py-20">
         <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-12">
+          <div className="mb-12 flex items-end justify-between gap-4">
             <div>
-              <h2 className="text-4xl font-bold mb-4 hover:text-primary transition-colors cursor-default">
-                Featured Jobs
-              </h2>
-              <p className="text-xl text-muted-foreground">
+              <h2 className="text-4xl font-bold text-(--text-primary)">Featured Jobs</h2>
+              <p className="mt-4 text-body-lg text-(--text-secondary)">
                 Latest opportunities waiting for you
               </p>
             </div>
-            <Button
-              variant="outline"
-              asChild
-              className="hover:bg-primary hover:text-primary-foreground hover:scale-105 transition-all duration-300 transform"
-            >
-              <Link href="/browse-jobs">View All Jobs</Link>
-            </Button>
+            <AnimatedButton href="/browse-jobs" label="View All Jobs" variant="outline" className="px-5 py-2" />
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {featuredJobs.map((job: any) => (
               <JobCard key={job.id} {...job} />
             ))}
@@ -264,35 +237,51 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="py-20 bg-muted/30">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-black mb-4 hover:text-primary transition-colors cursor-default">
-              How It Works
-            </h2>
-            <p className="text-muted-foreground text-lg font-light max-w-2xl mx-auto">
-              Get started in three simple steps
+      {/* Top Freelancers */}
+      <section className="py-20">
+        <div className="container mx-auto px-4">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl font-bold text-(--text-primary)">Top Freelancers</h2>
+            <p className="mt-4 text-body-lg text-(--text-secondary)">
+              Skilled professionals trusted by clients across Pakistan
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {topFreelancers.map((freelancer) => (
+              <FreelancerCard key={freelancer.id} {...freelancer} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="bg-white py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="mb-16 text-center">
+              <h2 className="text-4xl font-bold text-(--text-primary)">Kaise Kaam Karta Hai?</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-body-lg text-(--text-secondary)">
+              3 simple steps mein kaam start karein
+            </p>
+          </div>
+          <div className="relative mx-auto grid max-w-5xl grid-cols-1 gap-8 md:grid-cols-3">
+            <div className="pointer-events-none absolute left-1/2 top-10 hidden h-0.5 w-[68%] -translate-x-1/2 border-t-2 border-dashed border-(--brand-purple-light) md:block" />
             {howItWorks.map((step, index) => (
               <div
                 key={index}
-                className="group relative text-center p-8 rounded-2xl bg-gradient-card backdrop-blur-sm hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer border border-transparent hover:border-primary/20"
+                className="group relative cursor-pointer rounded-2xl border border-(--border) bg-white p-8 text-center transition-all duration-300 hover:border-(--brand-purple-light) hover:shadow-purple-sm"
               >
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 w-12 h-12 rounded-full bg-gradient-primary flex items-center justify-center text-white font-black text-xl shadow-lg group-hover:scale-110 group-hover:shadow-xl transition-all duration-300">
+                <div className="absolute -top-4 left-1/2 flex h-12 w-12 -translate-x-1/2 items-center justify-center rounded-full bg-(--brand-purple) text-xl font-black text-white shadow-purple-sm transition-all duration-300 group-hover:scale-105">
                   {index + 1}
                 </div>
-                <div className="flex justify-center mb-6 mt-4">
-                  <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all duration-300">
-                    <step.icon className="w-8 h-8 text-primary group-hover:scale-110 transition-transform" />
+                <div className="mb-6 mt-4 flex justify-center">
+                  <div className="flex h-16 w-16 items-center justify-center rounded-full bg-(--brand-purple-soft) transition-all duration-300 group-hover:bg-(--brand-purple)">
+                    <step.icon className="h-8 w-8 text-(--brand-purple) transition-colors duration-300 group-hover:text-white" />
                   </div>
                 </div>
-                <h3 className="text-xl font-bold mb-3 group-hover:text-primary transition-colors">
+                <h3 className="mb-3 text-xl font-semibold text-(--text-primary)">
                   {step.title}
                 </h3>
-                <p className="text-muted-foreground font-light group-hover:text-foreground transition-colors">
+                <p className="text-body text-(--text-secondary)">
                   {step.description}
                 </p>
               </div>
@@ -301,36 +290,21 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-hero opacity-10"></div>
-        <div className="container mx-auto px-4 md:px-6 relative z-10">
-          <div className="max-w-3xl mx-auto text-center space-y-8">
-            <h2 className="text-4xl md:text-6xl font-black hover:scale-105 transition-transform duration-300 cursor-default">
-              Ready to Get Started?
-            </h2>
-            <p className="text-xl text-muted-foreground font-light">
-              Join thousands of freelancers and clients building the future of
-              work in Pakistan
+      {/* CTA Banner */}
+      <section className="py-20">
+        <div className="container mx-auto px-4 md:px-6">
+          <div className="rounded-3xl bg-linear-to-r from-(--brand-purple-dark) to-(--brand-purple) px-6 py-14 text-center text-white md:px-12">
+            <h2 className="text-4xl font-bold md:text-5xl">Ready ho? Ab kaam start karo</h2>
+            <p className="mx-auto mt-4 max-w-2xl text-body-lg text-white/90">
+              Pakistan bhar ke freelancers aur clients ke saath aaj hi connect karo
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button
-                size="lg"
-                asChild
-                className="text-lg px-10 py-6 h-auto rounded-full bg-gradient-accent hover:opacity-90 hover:scale-105 hover:shadow-2xl transition-all duration-300 transform"
-              >
-                <Link href="/signup" className="group">
-                  Join as Freelancer
-                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            <div className="mt-8 flex flex-col justify-center gap-4 sm:flex-row">
+              <AnimatedButton href="/signup" label="Abhi Join Karo" variant="primary" className="rounded-full border border-white/20 bg-white text-(--brand-purple-dark) hover:bg-white" />
+              <Button asChild variant="outline" className="rounded-full border-2 border-white bg-transparent px-8 py-6 text-base font-semibold text-white hover:bg-white/10">
+                <Link href="/post-job">
+                  <Sparkles className="mr-2 h-4 w-4" />
+                  Kaam Post Karo
                 </Link>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="text-lg px-10 py-6 h-auto rounded-full border-2 hover:border-primary hover:bg-primary/5 hover:scale-105 hover:shadow-xl transition-all duration-300 transform"
-              >
-                <Link href="/post-job">Post a Job</Link>
               </Button>
             </div>
           </div>
@@ -338,6 +312,6 @@ export default async function Home() {
       </section>
 
       <Footer />
-    </div>
+    </main>
   );
 }

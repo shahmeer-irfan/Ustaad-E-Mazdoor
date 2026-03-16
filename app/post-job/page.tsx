@@ -89,14 +89,14 @@ export default function PostJobPage() {
       const data = await response.json();
       toast({
         title: "Success!",
-        description: "Job posted successfully!",
+        description: "Shabaash! Aapka kaam post ho gaya. Jaldi hi log apply karenge.",
       });
       router.push(`/job/${data.jobId}`);
     } catch (error: any) {
       console.error('Failed to post job:', error);
       toast({
         title: "Error",
-        description: error.message || 'Failed to post job. Please try again.',
+        description: error.message || 'Kuch gadbad ho gayi. Dobara try karo.',
         variant: "destructive",
       });
     } finally {
@@ -114,9 +114,9 @@ export default function PostJobPage() {
 
       <div className="bg-primary text-primary-foreground py-12">
         <div className="container mx-auto px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Post a Job</h1>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">Kaam Post Karo</h1>
           <p className="text-xl text-primary-foreground/80">
-            Find the perfect freelancer for your project
+            Apna kaam yahan post karo aur minutes mein sahi banda dhundo
           </p>
         </div>
       </div>
@@ -128,7 +128,7 @@ export default function PostJobPage() {
               {/* Job Title */}
               <div className="space-y-2">
                 <Label htmlFor="title" className="text-lg font-semibold">
-                  Job Title *
+                  Kaam ka Naam *
                 </Label>
                 <div className="relative group">
                   <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground transition-all duration-200 group-hover:text-primary group-hover:scale-110" />
@@ -142,9 +142,7 @@ export default function PostJobPage() {
                     required
                   />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  Write a clear, descriptive title for your project
-                </p>
+                <p className="text-sm text-muted-foreground">Clear aur seedha title likho</p>
               </div>
 
               {/* Category */}
@@ -180,7 +178,7 @@ export default function PostJobPage() {
               {/* Description */}
               <div className="space-y-2">
                 <Label htmlFor="description" className="text-lg font-semibold">
-                  Project Description *
+                  Kaam ki Details *
                 </Label>
                 <Textarea
                   id="description"
@@ -334,7 +332,7 @@ export default function PostJobPage() {
                   className="flex-1 rounded-full bg-gradient-accent hover:opacity-90 transition-opacity group"
                   size="lg"
                 >
-                  {loading ? 'Posting...' : 'Post Job'}
+                  {loading ? 'Thoda wait karo, dhundh rahe hain...' : 'Kaam Post Karo ->'}
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </Button>
                 <Button

@@ -49,9 +49,9 @@ const Navigation = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-6">
-            <Link href="/browse-jobs" className={navLinkClasses(pathname === "/browse-jobs")}>Find Work</Link>
-            <Link href="/freelancers" className={navLinkClasses(pathname === "/freelancers")}>Find Talent</Link>
-            <Link href="/how-it-works" className={navLinkClasses(pathname === "/how-it-works")}>How It Works</Link>
+            <Link href="/browse-jobs" className={navLinkClasses(pathname === "/browse-jobs")}>Kaam Dhundo</Link>
+            <Link href="/freelancers" className={navLinkClasses(pathname === "/freelancers")}>Talent Dhundo</Link>
+            <Link href="/how-it-works" className={navLinkClasses(pathname === "/how-it-works")}>Kaise Kaam Karta Hai</Link>
           </div>
 
           {/* Desktop Actions */}
@@ -136,7 +136,7 @@ const Navigation = () => {
                   asChild
                   className="px-5 py-2 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-full transition-all duration-200 hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)]"
                 >
-                  <Link href="/signup">Sign Up</Link>
+                  <Link href="/signup">Abhi Join Karo</Link>
                 </Button>
               </>
             )}
@@ -165,21 +165,21 @@ const Navigation = () => {
                   className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Find Work
+                  Kaam Dhundo
                 </Link>
                 <Link
                   href="/freelancers"
                   className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  Find Talent
+                  Talent Dhundo
                 </Link>
                 <Link
                   href="/how-it-works"
                   className="block rounded-lg px-4 py-3 text-(--text-secondary) transition-colors hover:bg-(--brand-purple-soft) hover:text-(--brand-purple)"
                   onClick={() => setMobileMenuOpen(false)}
                 >
-                  How It Works
+                  Kaise Kaam Karta Hai
                 </Link>
                 <div className="space-y-2 pt-4">
                   {user ? (
@@ -220,7 +220,7 @@ const Navigation = () => {
                         className="px-5 py-2 bg-[#7C3AED] hover:bg-[#5B21B6] text-white font-semibold rounded-full transition-all duration-200 hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)]"
                       >
                         <Link href="/signup" onClick={() => setMobileMenuOpen(false)}>
-                          Sign Up
+                          Abhi Join Karo
                         </Link>
                       </Button>
                     </>

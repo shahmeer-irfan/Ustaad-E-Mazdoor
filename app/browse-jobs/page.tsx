@@ -80,10 +80,10 @@ export default function BrowseJobsPage() {
       <div className="py-2">
         <div className="w-full">
           <h1 className="text-4xl font-bold text-[#0F0A1E] md:text-5xl">
-            Find Your Next Project
+            Available Kaam
           </h1>
           <p className="mb-8 mt-4 text-lg text-[#4B5563]">
-            Browse through hundreds of opportunities and start working today
+            Naya kaam dhundo aur aaj hi start karo
           </p>
 
           {/* Search and Filters */}
@@ -93,7 +93,7 @@ export default function BrowseJobsPage() {
                 <Search className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-[#9CA3AF]" />
                 <Input
                   type="text"
-                  placeholder="Search jobs..."
+                  placeholder="Kaunsa kaam dhundh rahe ho? (e.g. Electrician, Plumber...)"
                   className="rounded-xl border-[#E9D5FF] bg-white pl-10 focus-visible:ring-2 focus-visible:ring-[#7C3AED]"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -121,7 +121,7 @@ export default function BrowseJobsPage() {
               </Select>
               <Select value={location} onValueChange={setLocation}>
                 <SelectTrigger className="rounded-xl border-[#E9D5FF] bg-white focus:ring-2 focus:ring-[#7C3AED]">
-                  <SelectValue placeholder="Location" />
+                  <SelectValue placeholder="Apna shehar chunein" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Locations</SelectItem>
@@ -139,17 +139,17 @@ export default function BrowseJobsPage() {
       <div className="w-full py-12">
         <div className="flex items-center justify-between mb-8">
           <div className="flex flex-col gap-1">
-            <h1 className="text-2xl font-bold text-[#0F0A1E]">Available Jobs</h1>
+            <h1 className="text-2xl font-bold text-[#0F0A1E]">Available Kaam</h1>
             <div className="w-10 h-1 rounded-full bg-[#7C3AED]" />
           </div>
           <span className="text-sm text-[#6B7280] bg-[#F5F3FF] px-4 py-2 rounded-full border border-[#E9D5FF]">
-            {jobs.length} jobs found
+            {jobs.length} kaam mil gaye
           </span>
         </div>
 
         {jobs.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-[#6B7280]">No jobs found. Try adjusting your filters.</p>
+            <p className="text-[#6B7280]">Koi kaam nahi mila - filters badal ke dobara try karo</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">

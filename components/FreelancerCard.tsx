@@ -83,7 +83,7 @@ const FreelancerCard = ({
             href={`/freelancer/${id}`}
             className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#5B21B6] hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)] active:scale-95"
           >
-            Hire
+            Hire Karo
           </Link>
         </div>
       </div>
