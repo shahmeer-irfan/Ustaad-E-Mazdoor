@@ -1,7 +1,24 @@
 const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
+
+const envPath = path.join(__dirname, '.env.local');
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach((line) => {
+    const match = line.match(/^([^=]+)=(.*)$/);
+    if (match && !process.env[match[1].trim()]) {
+      process.env[match[1].trim()] = match[2].trim();
+    }
+  });
+}
+
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is missing. Add it to .env.local or your shell environment.');
+}
 
 const pool = new Pool({
-  connectionString: 'postgresql://postgres.jiqlhixpflsdyblflywp:Fast_dbproject555@aws-1-ap-south-1.pooler.supabase.com:5432/postgres',
+  connectionString: process.env.DATABASE_URL,
   ssl: { rejectUnauthorized: false }
 });
 

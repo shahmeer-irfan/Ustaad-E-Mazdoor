@@ -4,17 +4,23 @@ const { Pool } = require('pg');
 const fs = require('fs');
 const path = require('path');
 const envPath = path.join(__dirname, '.env.local');
-const envContent = fs.readFileSync(envPath, 'utf8');
-const envVars = {};
-envContent.split('\n').forEach(line => {
-  const match = line.match(/^([^=]+)=(.*)$/);
-  if (match) {
-    envVars[match[1].trim()] = match[2].trim();
-  }
-});
+if (fs.existsSync(envPath)) {
+  const envContent = fs.readFileSync(envPath, 'utf8');
+  envContent.split('\n').forEach((line) => {
+    const match = line.match(/^([^=]+)=(.*)$/);
+    if (match && !process.env[match[1].trim()]) {
+      process.env[match[1].trim()] = match[2].trim();
+    }
+  });
+}
+
+if (!process.env.DATABASE_URL) {
+  throw new Error('DATABASE_URL is missing. Add it to .env.local or your shell environment.');
+}
 
 const pool = new Pool({
-  connectionString: envVars.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
 const localServicesSkills = [
