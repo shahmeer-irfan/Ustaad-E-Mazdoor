@@ -1,6 +1,4 @@
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Star, MapPin } from "lucide-react";
+import { Star, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface FreelancerCardProps {
@@ -27,67 +25,141 @@ const FreelancerCard = ({
   avatar,
 }: FreelancerCardProps) => {
   return (
-    <Card className="group h-full cursor-pointer rounded-2xl border border-[#E9D5FF] bg-white p-5 flex flex-col gap-4 transition-all duration-200 ease-out hover:border-[#7C3AED] hover:shadow-[0_8px_30px_rgba(124,58,237,0.12)] hover:-translate-y-1">
-      <div className="space-y-4">
-        <div className="flex items-start space-x-4">
-          <div className="h-16 w-16 shrink-0 rounded-full ring-2 ring-[#A855F7]">
-            {avatar ? (
-              <img
-                src={avatar}
-                alt={name}
-                className="h-full w-full rounded-full object-cover"
-              />
-            ) : (
-              <div className="flex h-full w-full items-center justify-center rounded-full bg-[#EDE9FE] text-2xl font-bold text-[#7C3AED]">
-                {name.charAt(0)}
-              </div>
-            )}
-          </div>
-          <div className="flex-1 min-w-0">
-            <h3 className="truncate text-lg font-bold text-[#0F0A1E]">{name}</h3>
-            <p className="text-sm text-[#4B5563]">{title}</p>
-            <div className="mt-1 flex items-center text-sm">
-              <MapPin className="mr-1 h-4 w-4 text-[#9CA3AF]" />
-              <span className="text-[#4B5563]">{location}</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="flex items-center space-x-2">
-          <div className="flex items-center">
-            <Star className="mr-1 h-4 w-4 fill-[#7C3AED] text-[#7C3AED]" />
-            <span className="font-semibold text-[#0F0A1E]">{rating}</span>
-          </div>
-          <span className="text-sm text-[#4B5563]">
-            ({reviews} reviews)
-          </span>
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {skills.slice(0, 3).map((skill: string) => (
-            <Badge key={skill} className="rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#5B21B6]">
-              {skill}
-            </Badge>
-          ))}
-          {skills.length > 3 && (
-            <Badge className="rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#5B21B6]">+{skills.length - 3} more</Badge>
+    <div
+      className="group h-full rounded-2xl p-6 flex flex-col gap-4 transition-all duration-200 ease-out hover:-translate-y-1"
+      style={{
+        background: "var(--bg-card)",
+        boxShadow: "inset 0 0 0 1px var(--border)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow =
+          "inset 0 0 0 1px var(--brand), 0 24px 50px -16px var(--brand-glow)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "inset 0 0 0 1px var(--border)";
+      }}
+    >
+      <div className="flex items-start gap-4">
+        <div
+          className="h-14 w-14 shrink-0 rounded-full flex items-center justify-center text-white font-bold text-[16px]"
+          style={{
+            background: "var(--grad-brand)",
+            boxShadow: "0 8px 22px -10px var(--brand-glow)",
+          }}
+        >
+          {avatar ? (
+            <img
+              src={avatar}
+              alt={name}
+              className="h-full w-full rounded-full object-cover"
+            />
+          ) : (
+            (name || "?").charAt(0).toUpperCase()
           )}
         </div>
-
-        <div className="flex items-center justify-between border-t border-[#F3F4F6] pt-4">
-          <div>
-            <p className="text-sm text-[#4B5563]">Starting at</p>
-            <p className="text-lg font-bold text-[#7C3AED]">{hourlyRate}/hr</p>
-          </div>
-          <Link
-            href={`/freelancer/${id}`}
-            className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#5B21B6] hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)] active:scale-95"
+        <div className="flex-1 min-w-0">
+          <h3
+            className="truncate text-[16px] font-semibold leading-tight"
+            style={{ color: "var(--text-primary)" }}
           >
-            Hire Karo
-          </Link>
+            {name}
+          </h3>
+          <p
+            className="text-[13.5px] truncate"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            {title}
+          </p>
+          <div
+            className="mt-1 inline-flex items-center text-[12.5px] gap-1"
+            style={{ color: "var(--text-muted)" }}
+          >
+            <MapPin className="h-3 w-3" />
+            {location}
+          </div>
         </div>
       </div>
-    </Card>
+
+      <div className="flex items-center gap-2 star-row">
+        <div className="flex">
+          {[0, 1, 2, 3, 4].map((i) => (
+            <Star
+              key={i}
+              className="w-3.5 h-3.5"
+              style={{
+                color:
+                  i < Math.round(Number(rating) || 0)
+                    ? "var(--brand)"
+                    : "var(--border-bright)",
+              }}
+              fill="currentColor"
+            />
+          ))}
+        </div>
+        <span
+          className="text-[13px] font-mono font-semibold"
+          style={{ color: "var(--text-primary)" }}
+        >
+          {rating}
+        </span>
+        <span className="text-[12px]" style={{ color: "var(--text-muted)" }}>
+          ({reviews} reviews)
+        </span>
+      </div>
+
+      <div className="flex flex-wrap gap-1.5">
+        {skills.slice(0, 3).map((skill: string) => (
+          <span
+            key={skill}
+            className="rounded-md px-2 py-0.5 text-[11px] font-mono"
+            style={{ background: "var(--brand-dim)", color: "var(--brand)" }}
+          >
+            {skill}
+          </span>
+        ))}
+        {skills.length > 3 && (
+          <span
+            className="rounded-md px-2 py-0.5 text-[11px] font-mono"
+            style={{
+              background: "var(--bg-elevated)",
+              color: "var(--text-secondary)",
+            }}
+          >
+            +{skills.length - 3} more
+          </span>
+        )}
+      </div>
+
+      <div className="h-px mt-auto" style={{ background: "var(--border)" }} />
+
+      <div className="flex items-center justify-between gap-3">
+        <div className="leading-tight">
+          <p
+            className="text-[10.5px] uppercase tracking-[0.12em] font-semibold"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Starting at
+          </p>
+          <p
+            className="font-mono font-bold text-[15.5px]"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {hourlyRate}/hr
+          </p>
+        </div>
+        <Link
+          href={`/freelancer/${id}`}
+          className="btn-shine inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition"
+          style={{
+            background: "var(--grad-brand)",
+            boxShadow: "0 6px 18px -6px var(--brand-glow)",
+          }}
+        >
+          Hire Karo
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+    </div>
   );
 };
 

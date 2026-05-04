@@ -1,5 +1,4 @@
 import { LucideIcon } from "lucide-react";
-import { Card } from "@/components/ui/card";
 
 interface CategoryCardProps {
   icon: LucideIcon;
@@ -9,17 +8,37 @@ interface CategoryCardProps {
 
 const CategoryCard = ({ icon: Icon, title, count }: CategoryCardProps) => {
   return (
-    <Card className="group bg-white border border-[#E9D5FF] rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 ease-out hover:border-[#7C3AED] hover:shadow-[0_8px_30px_rgba(124,58,237,0.12)] hover:-translate-y-1">
-      <div className="flex flex-col items-center space-y-4 text-center">
-        <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EDE9FE] transition-all duration-300 group-hover:bg-[#7C3AED]">
-          <Icon className="h-8 w-8 text-[#7C3AED] transition-colors duration-300 group-hover:text-white" strokeWidth={2.5} />
+    <div
+      className="group rounded-2xl p-5 flex flex-col gap-4 transition-all duration-200 ease-out hover:-translate-y-1"
+      style={{
+        background: "var(--bg-card)",
+        boxShadow: "inset 0 0 0 1px var(--border)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow =
+          "inset 0 0 0 1px var(--brand), 0 24px 50px -16px var(--brand-glow)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "inset 0 0 0 1px var(--border)";
+      }}
+    >
+      <div className="flex flex-col items-center gap-4 text-center">
+        <div
+          className="flex h-14 w-14 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
+          style={{ background: "var(--brand-dim)", color: "var(--brand)" }}
+        >
+          <Icon className="h-7 w-7" strokeWidth={2.2} />
         </div>
         <div>
-          <h3 className="mb-1 text-lg font-semibold text-[#0F0A1E]">{title}</h3>
-          <p className="text-sm text-[#9CA3AF]">{count}</p>
+          <h3 className="mb-1 text-[16px] font-semibold" style={{ color: "var(--text-primary)" }}>
+            {title}
+          </h3>
+          <p className="text-[12.5px] font-mono" style={{ color: "var(--brand)" }}>
+            {count}
+          </p>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

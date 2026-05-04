@@ -66,6 +66,13 @@
     --input: var(--border);
     --ring: var(--brand);
     --radius: 0.75rem;
+
+    /* Legacy purple-theme aliases. Older pages still reference these tokens;
+       map them onto the new saffron brand so nothing renders unstyled. */
+    --brand-purple:       var(--brand);
+    --brand-purple-dark:  var(--brand-hover);
+    --brand-purple-light: #fdba74;
+    --brand-purple-soft:  var(--brand-dim);
   }
 
   * {
@@ -140,6 +147,14 @@
   .bg-grad-brand { background: var(--grad-brand); }
   .bg-grad-card  { background: var(--grad-card); }
   .bg-grad-hero  { background: var(--grad-hero); }
+
+  /* Legacy gradient utilities — pages from the previous purple theme reference
+     these. Re-aliasing them to the new brand keeps those pages cohesive without
+     editing every call-site. */
+  .bg-gradient-primary { background: var(--grad-brand); }
+  .bg-gradient-accent  { background: var(--grad-brand); }
+  .bg-gradient-hero    { background: var(--grad-hero); }
+  .bg-gradient-card    { background: var(--grad-card); }
 
   .text-grad-brand {
     background: var(--grad-text);
