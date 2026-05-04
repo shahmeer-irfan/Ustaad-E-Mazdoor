@@ -4,8 +4,30 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ClerkProvider } from "@clerk/nextjs";
-import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
+import {
+  Plus_Jakarta_Sans,
+  JetBrains_Mono,
+  Bricolage_Grotesque,
+  Fraunces,
+} from "next/font/google";
 import SmoothScroll from "@/components/home/SmoothScroll";
+
+// Display — variable, characterful, optical-sized
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["200", "300", "400", "500", "600", "700", "800"],
+  variable: "--font-display",
+  display: "swap",
+});
+
+// Editorial italic accent — high contrast, dramatic
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700", "800", "900"],
+  style: ["normal", "italic"],
+  variable: "--font-editorial",
+  display: "swap",
+});
 
 const jakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
@@ -41,7 +63,10 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${jakarta.variable} ${mono.variable}`}>
+      <html
+        lang="en"
+        className={`${bricolage.variable} ${fraunces.variable} ${jakarta.variable} ${mono.variable}`}
+      >
         <body className="antialiased">
           <TooltipProvider>
             <SmoothScroll>{children}</SmoothScroll>

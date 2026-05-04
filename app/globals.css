@@ -93,6 +93,10 @@
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
     overflow-x: hidden;
+    cursor: none;
+  }
+  @media (max-width: 1024px) {
+    body { cursor: auto; }
   }
 
   ::selection {
@@ -123,11 +127,12 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+    font-family: var(--font-display), ui-sans-serif, system-ui, sans-serif;
     font-weight: 700;
-    letter-spacing: -0.025em;
+    letter-spacing: -0.035em;
     color: var(--text-primary);
-    line-height: 1.05;
+    line-height: 0.95;
+    font-variation-settings: "opsz" 96, "wght" 700;
   }
 }
 
@@ -135,14 +140,33 @@
    Utilities
    ======================================================================== */
 @layer utilities {
+  .font-display   { font-family: var(--font-display), system-ui, sans-serif; font-variation-settings: "opsz" 96; }
+  .font-editorial { font-family: var(--font-editorial), Georgia, serif; }
+  .font-body      { font-family: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif; }
   .font-mono {
     font-family: var(--font-mono), ui-monospace, "SF Mono", monospace;
     font-feature-settings: "ss02", "tnum";
   }
 
-  .text-hero { font-size: var(--text-hero); line-height: 0.98; letter-spacing: -0.04em; font-weight: 800; }
-  .text-section { font-size: var(--text-xl); line-height: 1.05; letter-spacing: -0.03em; font-weight: 700; }
-  .text-card-title { font-size: var(--text-lg); line-height: 1.2; letter-spacing: -0.02em; font-weight: 600; }
+  /* The hero gets its own oversized leading and aggressive negative tracking */
+  .text-hero {
+    font-family: var(--font-display), system-ui, sans-serif;
+    font-size: clamp(56px, 11vw, 168px);
+    line-height: 0.86;
+    letter-spacing: -0.05em;
+    font-weight: 800;
+    font-variation-settings: "opsz" 96, "wght" 800;
+  }
+  .text-section { font-size: var(--text-xl); line-height: 1.0; letter-spacing: -0.04em; font-weight: 700; }
+  .text-card-title { font-size: var(--text-lg); line-height: 1.15; letter-spacing: -0.025em; font-weight: 600; }
+
+  /* Editorial italic — Fraunces with WONK + soft axes */
+  .text-editorial-italic {
+    font-family: var(--font-editorial), Georgia, serif;
+    font-style: italic;
+    font-variation-settings: "opsz" 144, "WONK" 1, "SOFT" 100;
+    letter-spacing: -0.02em;
+  }
 
   .bg-grad-brand { background: var(--grad-brand); }
   .bg-grad-card  { background: var(--grad-card); }
@@ -231,13 +255,93 @@
     50%      { transform: translateY(8px); opacity: 1; }
   }
 
-  /* ---- Marquee ---- */
-  .marquee-track {
-    animation: marquee 40s linear infinite;
+  /* ---- Marquee variants ---- */
+  .marquee-track   { animation: marquee 40s linear infinite; }
+  .marquee-slow    { animation: marquee 60s linear infinite; }
+  .marquee-fast    { animation: marquee 22s linear infinite; }
+  .marquee-reverse { animation: marquee-r 50s linear infinite; }
+  @keyframes marquee   { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes marquee-r { from { transform: translateX(-50%); } to { transform: translateX(0); } }
+
+  /* ---- Perspective wrapper for tilt children ---- */
+  .perspective-1000 { perspective: 1000px; }
+  .preserve-3d { transform-style: preserve-3d; }
+
+  /* ---- Letter split helpers ---- */
+  .char-mask {
+    display: inline-block;
+    overflow: hidden;
+    line-height: 0.86;
+    padding: 0.05em 0;
   }
-  @keyframes marquee {
-    from { transform: translateX(0); }
-    to   { transform: translateX(-50%); }
+  .char-mask > span {
+    display: inline-block;
+    transform: translateY(110%);
+    will-change: transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .char-mask > span { transform: none !important; }
+  }
+
+  /* ---- Editorial dropcap ---- */
+  .dropcap::first-letter {
+    font-family: var(--font-editorial), Georgia, serif;
+    font-style: italic;
+    font-size: 1.6em;
+    font-weight: 600;
+    line-height: 0.8;
+    margin-right: 0.05em;
+    color: var(--brand);
+    font-variation-settings: "opsz" 144, "WONK" 1;
+  }
+
+  /* ---- Drift animation for ambient orbs ---- */
+  .drift-1 { animation: drift1 22s ease-in-out infinite; }
+  .drift-2 { animation: drift2 28s ease-in-out infinite; }
+  .drift-3 { animation: drift3 34s ease-in-out infinite; }
+  @keyframes drift1 {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); }
+    50%      { transform: translate3d(60px,-40px,0) scale(1.08); }
+  }
+  @keyframes drift2 {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); }
+    50%      { transform: translate3d(-50px,30px,0) scale(0.94); }
+  }
+  @keyframes drift3 {
+    0%, 100% { transform: translate3d(0,0,0) scale(1); }
+    50%      { transform: translate3d(40px,50px,0) scale(1.12); }
+  }
+
+  /* ---- Sliced gradient text ---- */
+  .text-stroke {
+    -webkit-text-stroke: 1.5px var(--text-primary);
+    color: transparent;
+  }
+
+  /* ---- Glass card ---- */
+  .glass {
+    background: rgba(23, 27, 38, 0.55);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,0.05);
+  }
+
+  /* ---- Asterisk spinner ---- */
+  .spin-slow { animation: spin-slow 12s linear infinite; }
+  @keyframes spin-slow { to { transform: rotate(360deg); } }
+
+  /* ---- Ticker pulse ---- */
+  .live-pulse::before {
+    content: ""; display: inline-block; vertical-align: middle;
+    width: 8px; height: 8px; border-radius: 999px;
+    background: var(--success);
+    margin-right: 8px;
+    box-shadow: 0 0 0 0 rgba(34,197,94,0.6);
+    animation: live-pulse 1.6s ease-out infinite;
+  }
+  @keyframes live-pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(34,197,94,0.6); }
+    100% { box-shadow: 0 0 0 12px rgba(34,197,94,0); }
   }
 
   /* ---- Step connector dotted SVG line ---- */
