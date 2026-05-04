@@ -7,37 +7,37 @@ const linkGroups = [
   {
     heading: "Workers Ke Liye",
     links: [
-      { label: "Profile Banao",     href: "#" },
-      { label: "Kaam Dhundo",       href: "#" },
-      { label: "Skill Test",        href: "#" },
-      { label: "Payment & Fees",    href: "#" },
+      { label: "Profile Banao",     href: "/sign-up"      },
+      { label: "Kaam Dhundo",       href: "/browse-jobs"  },
+      { label: "Skill Test",        href: "/sign-up"      },
+      { label: "Payment & Fees",    href: "/how-it-works" },
     ],
   },
   {
     heading: "Clients Ke Liye",
     links: [
-      { label: "Kaam Post Karo",    href: "#" },
-      { label: "Talent Dhundo",     href: "#" },
-      { label: "Pricing",           href: "#" },
-      { label: "Business Plans",    href: "#" },
+      { label: "Kaam Post Karo",    href: "/post-job"     },
+      { label: "Talent Dhundo",     href: "/freelancers"  },
+      { label: "Pricing",           href: "/how-it-works" },
+      { label: "Business Plans",    href: "/contact"      },
     ],
   },
   {
     heading: "Ustaad",
     links: [
-      { label: "Hum Kon Hain",      href: "#" },
-      { label: "Careers",           href: "#" },
-      { label: "Press & Media",     href: "#" },
-      { label: "Blog",              href: "#" },
+      { label: "Hum Kon Hain",      href: "/about"   },
+      { label: "Kaise Kaam Karta Hai", href: "/how-it-works" },
+      { label: "Contact",           href: "/contact" },
+      { label: "Privacy",           href: "/privacy" },
     ],
   },
   {
     heading: "Madad",
     links: [
-      { label: "Help Center",       href: "#" },
-      { label: "Trust & Safety",    href: "#" },
-      { label: "Terms",             href: "#" },
-      { label: "Privacy",           href: "#" },
+      { label: "Help Center",       href: "/contact" },
+      { label: "Trust & Safety",    href: "/privacy" },
+      { label: "Login",             href: "/sign-in" },
+      { label: "Sign Up",           href: "/sign-up" },
     ],
   },
 ];

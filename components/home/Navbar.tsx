@@ -6,9 +6,9 @@ import { Menu, X, Phone } from "lucide-react";
 import Link from "next/link";
 
 const navLinks = [
-  { label: "Kaam Dhundo",         href: "#" },
-  { label: "Talent Dhundo",       href: "#" },
-  { label: "Kaise Kaam Karta Hai", href: "#" },
+  { label: "Kaam Dhundo",          href: "/browse-jobs"   },
+  { label: "Talent Dhundo",        href: "/freelancers"   },
+  { label: "Kaise Kaam Karta Hai", href: "/how-it-works"  },
 ];
 
 export default function Navbar() {
@@ -75,13 +75,13 @@ export default function Navbar() {
             0300-USTAAD
           </a>
           <Link
-            href="#"
+            href="/sign-in"
             className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
           >
             Login
           </Link>
           <Link
-            href="#"
+            href="/sign-up"
             className="btn-shine px-5 py-2.5 text-[14px] font-semibold rounded-full text-white transition-all hover:-translate-y-0.5"
             style={{ background: "var(--grad-brand)", boxShadow: "0 6px 20px -6px var(--brand-glow)" }}
           >
@@ -135,14 +135,14 @@ export default function Navbar() {
                 0300-USTAAD
               </a>
               <Link
-                href="#"
+                href="/sign-in"
                 onClick={() => setOpen(false)}
                 className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
               >
                 Login
               </Link>
               <Link
-                href="#"
+                href="/sign-up"
                 onClick={() => setOpen(false)}
                 className="mt-2 px-5 py-3 text-center text-[15px] font-semibold rounded-full text-white"
                 style={{ background: "var(--grad-brand)" }}

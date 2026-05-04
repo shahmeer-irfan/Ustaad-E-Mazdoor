@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import { MapPin, Clock, Users, ArrowRight } from "lucide-react";
 import { jobs } from "./data";
 
@@ -45,7 +46,7 @@ export default function FeaturedJobs() {
             </p>
           </div>
           <a
-            href="#"
+            href="/browse-jobs"
             className="inline-flex items-center gap-1.5 text-[14px] font-semibold transition hover:gap-3"
             style={{ color: "var(--brand)" }}
           >
@@ -145,7 +146,8 @@ export default function FeaturedJobs() {
                     </span>
                   </span>
                 </div>
-                <button
+                <Link
+                  href="/sign-in"
                   className="inline-flex items-center gap-1 text-[13px] font-semibold px-4 py-2 rounded-full transition group/btn"
                   style={{
                     color: "var(--brand)",
@@ -154,7 +156,7 @@ export default function FeaturedJobs() {
                 >
                   Apply
                   <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover/btn:translate-x-0.5" />
-                </button>
+                </Link>
               </div>
             </motion.article>
           ))}

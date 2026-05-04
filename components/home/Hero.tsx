@@ -135,7 +135,12 @@ export default function Hero() {
           </p>
 
           {/* Search bar */}
-          <div ref={search} className="relative max-w-[760px] mx-auto">
+          <form
+            ref={search as any}
+            action="/browse-jobs"
+            method="get"
+            className="relative max-w-[760px] mx-auto"
+          >
             <div
               className="flex items-stretch rounded-full bg-white text-slate-900 overflow-hidden shadow-[0_30px_70px_-20px_rgba(0,0,0,0.6),0_0_0_1px_rgba(255,255,255,0.08)]"
               style={{ minHeight: 64 }}
@@ -146,11 +151,12 @@ export default function Hero() {
                 <div className="flex flex-col leading-tight min-w-0">
                   <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-slate-500">Shehar</span>
                   <select
+                    name="location"
                     className="bg-transparent outline-none font-semibold text-[14px] text-slate-900 truncate cursor-pointer"
                     defaultValue="Karachi"
                     aria-label="Select city"
                   >
-                    {cities.map(c => <option key={c}>{c}</option>)}
+                    {cities.map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
@@ -163,17 +169,19 @@ export default function Hero() {
                 <div className="flex flex-col leading-tight min-w-0">
                   <span className="text-[10px] uppercase tracking-[0.12em] font-semibold text-slate-500">Kaam Ka Qism</span>
                   <select
+                    name="category"
                     className="bg-transparent outline-none font-semibold text-[14px] text-slate-900 truncate cursor-pointer"
                     defaultValue="Electrician"
                     aria-label="Select service"
                   >
-                    {categories.map(c => <option key={c.nameEn}>{c.nameEn}</option>)}
+                    {categories.map(c => <option key={c.nameEn} value={c.nameEn}>{c.nameEn}</option>)}
                   </select>
                 </div>
               </div>
 
               {/* Submit */}
               <button
+                type="submit"
                 className="btn-shine flex items-center gap-2 px-6 sm:px-8 m-1.5 rounded-full text-white text-[14px] sm:text-[15px] font-semibold transition hover:brightness-110"
                 style={{ background: "var(--grad-brand)" }}
                 aria-label="Search"
@@ -193,7 +201,7 @@ export default function Hero() {
                 </span>
               ))}
             </div>
-          </div>
+          </form>
         </div>
 
         {/* Scroll cue */}
