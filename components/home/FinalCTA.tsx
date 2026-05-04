@@ -45,7 +45,7 @@ export default function FinalCTA() {
 
               <div className="mt-8 flex flex-wrap gap-3">
                 <a
-                  href="#"
+                  href="/sign-up"
                   className="btn-shine inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-white text-[15px] font-semibold transition hover:-translate-y-0.5"
                   style={{ background: "var(--grad-brand)", boxShadow: "0 12px 30px -10px var(--brand-glow)" }}
                 >
@@ -54,7 +54,7 @@ export default function FinalCTA() {
                   <ArrowRight className="w-4 h-4" />
                 </a>
                 <a
-                  href="#"
+                  href="/post-job"
                   className="inline-flex items-center gap-2 px-6 py-3.5 rounded-full text-[15px] font-semibold transition hover:-translate-y-0.5"
                   style={{
                     color: "var(--text-primary)",

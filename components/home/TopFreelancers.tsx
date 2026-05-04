@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import Link from "next/link";
 import { MapPin, Star, BadgeCheck, Clock, Briefcase, ArrowRight } from "lucide-react";
 import { freelancers } from "./data";
 
@@ -156,13 +157,14 @@ export default function TopFreelancers() {
                   </span>
                   <span className="font-mono font-bold text-[16px]">{f.rate}</span>
                 </div>
-                <button
+                <Link
+                  href="/freelancers"
                   className="btn-shine inline-flex items-center gap-1.5 text-[13px] font-semibold px-4 py-2 rounded-full text-white transition"
                   style={{ background: "var(--grad-brand)", boxShadow: "0 6px 18px -6px var(--brand-glow)" }}
                 >
                   Hire Now
                   <ArrowRight className="w-3.5 h-3.5" />
-                </button>
+                </Link>
               </div>
             </motion.article>
           ))}

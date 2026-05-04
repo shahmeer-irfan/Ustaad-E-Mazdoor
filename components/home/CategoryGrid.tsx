@@ -42,7 +42,7 @@ export default function CategoryGrid() {
             </p>
           </div>
           <a
-            href="#"
+            href="/browse-jobs"
             className="inline-flex items-center gap-1.5 text-[14px] font-semibold transition hover:gap-3"
             style={{ color: "var(--brand)" }}
           >
@@ -58,7 +58,7 @@ export default function CategoryGrid() {
             return (
               <motion.a
                 key={c.nameEn}
-                href="#"
+                href={`/browse-jobs?category=${encodeURIComponent(c.nameEn)}`}
                 className="cat-card group relative rounded-[14px] p-4 sm:p-5 cursor-pointer overflow-hidden"
                 style={{
                   background: "var(--bg-card)",
