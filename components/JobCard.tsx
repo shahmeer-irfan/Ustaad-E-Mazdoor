@@ -1,4 +1,4 @@
-import { Clock, MapPin, DollarSign } from "lucide-react";
+import { Clock, MapPin, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 interface JobCardProps {
@@ -22,44 +22,82 @@ const JobCard = ({
 }: JobCardProps) => {
   return (
     <div
-      className="group h-full cursor-pointer rounded-2xl border border-[#E9D5FF] bg-white p-6 flex flex-col gap-4 transition-all duration-200 ease-out hover:border-[#7C3AED] hover:shadow-[0_8px_30px_rgba(124,58,237,0.12)] hover:-translate-y-1"
+      className="group h-full rounded-2xl p-6 flex flex-col gap-4 transition-all duration-200 ease-out hover:-translate-y-1"
+      style={{
+        background: "var(--bg-card)",
+        boxShadow: "inset 0 0 0 1px var(--border)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.boxShadow =
+          "inset 0 0 0 1px var(--brand), 0 24px 50px -16px var(--brand-glow)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.boxShadow = "inset 0 0 0 1px var(--border)";
+      }}
     >
       <div className="flex flex-col gap-2">
-        <h3 className="line-clamp-1 text-lg font-semibold leading-tight text-[#0F0A1E]">
-          <Link href={`/job/${id}`}>{title}</Link>
+        <h3 className="clamp-2 text-[17px] font-semibold leading-snug">
+          <Link
+            href={`/job/${id}`}
+            className="transition hover:text-[color:var(--brand)]"
+          >
+            {title}
+          </Link>
         </h3>
-        <span className="w-fit rounded-full bg-[#EDE9FE] px-3 py-1 text-xs font-semibold text-[#5B21B6]">
+        <span
+          className="w-fit rounded-md px-2.5 py-1 text-[11px] font-semibold tracking-wide font-mono"
+          style={{ background: "var(--brand-dim)", color: "var(--brand)" }}
+        >
           {category}
         </span>
       </div>
 
-      <p className="line-clamp-2 flex-1 text-sm leading-relaxed text-[#4B5563]">
+      <p
+        className="clamp-2 flex-1 text-[14px] leading-relaxed"
+        style={{ color: "var(--text-secondary)" }}
+      >
         {description}
       </p>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <span className="flex items-center gap-1 rounded-full border border-[#F3F4F6] bg-[#F9FAFB] px-2.5 py-1 text-xs text-[#6B7280]">
-          <MapPin className="h-3 w-3 text-[#7C3AED]" />
+      <div className="flex flex-wrap items-center gap-4 text-[12.5px]"
+           style={{ color: "var(--text-muted)" }}>
+        <span className="flex items-center gap-1.5">
+          <MapPin className="h-3.5 w-3.5" />
           {location}
         </span>
-        <span className="flex items-center gap-1 rounded-full border border-[#F3F4F6] bg-[#F9FAFB] px-2.5 py-1 text-xs text-[#6B7280]">
-          <Clock className="h-3 w-3 text-[#7C3AED]" />
+        <span className="flex items-center gap-1.5">
+          <Clock className="h-3.5 w-3.5" />
           {postedTime}
         </span>
       </div>
 
-      <div className="border-t border-[#F3F4F6]" />
+      <div className="h-px" style={{ background: "var(--border)" }} />
 
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-1">
-          <DollarSign className="h-4 w-4 text-[#7C3AED]" />
-          <span className="text-base font-bold text-[#7C3AED]">{budget}</span>
-      </div>
+      <div className="flex items-center justify-between gap-3">
+        <div className="flex flex-col leading-tight">
+          <span
+            className="text-[10.5px] uppercase tracking-[0.12em] font-semibold"
+            style={{ color: "var(--text-muted)" }}
+          >
+            Budget
+          </span>
+          <span
+            className="font-mono font-bold text-[16px]"
+            style={{ color: "var(--text-primary)" }}
+          >
+            {budget}
+          </span>
+        </div>
         <Link
           href={`/job/${id}`}
-          className="rounded-xl bg-[#7C3AED] px-5 py-2 text-sm font-semibold text-white transition-all duration-200 hover:bg-[#5B21B6] hover:shadow-[0_4px_14px_rgba(124,58,237,0.35)] active:scale-95"
+          className="btn-shine inline-flex items-center gap-1 rounded-full px-4 py-2 text-[13px] font-semibold text-white transition"
+          style={{
+            background: "var(--grad-brand)",
+            boxShadow: "0 6px 18px -6px var(--brand-glow)",
+          }}
         >
           Apply Karo
+          <ArrowRight className="w-3.5 h-3.5" />
         </Link>
       </div>
     </div>
