@@ -1,11 +1,134 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
+import {
+  motion,
+  useMotionValue,
+  useSpring,
+  useTransform,
+  type Variants,
+} from "framer-motion";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowRight } from "lucide-react";
-import { categories } from "./data";
+import { ArrowUpRight } from "lucide-react";
+import { categories, type Category } from "./data";
+
+// 3D tilt card
+function CategoryCard({ c, idx }: { c: Category; idx: number }) {
+  const ref = useRef<HTMLAnchorElement>(null);
+  const mx = useMotionValue(0);
+  const my = useMotionValue(0);
+  const sx = useSpring(mx, { stiffness: 200, damping: 18 });
+  const sy = useSpring(my, { stiffness: 200, damping: 18 });
+  const rotateX = useTransform(sy, [-0.5, 0.5], ["8deg", "-8deg"]);
+  const rotateY = useTransform(sx, [-0.5, 0.5], ["-10deg", "10deg"]);
+  const glowX   = useTransform(sx, [-0.5, 0.5], ["0%", "100%"]);
+  const glowY   = useTransform(sy, [-0.5, 0.5], ["0%", "100%"]);
+
+  const Icon = c.icon;
+
+  const handleMove = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (!ref.current) return;
+    if (typeof window !== "undefined" && window.matchMedia("(max-width: 1024px)").matches) return;
+    const r = ref.current.getBoundingClientRect();
+    mx.set((e.clientX - r.left) / r.width - 0.5);
+    my.set((e.clientY - r.top)  / r.height - 0.5);
+  };
+  const handleLeave = () => { mx.set(0); my.set(0); };
+
+  return (
+    <motion.a
+      ref={ref}
+      href={`/browse-jobs?category=${encodeURIComponent(c.nameEn)}`}
+      onMouseMove={handleMove}
+      onMouseLeave={handleLeave}
+      data-cursor="link"
+      className="cat-card group relative rounded-[18px] p-5 sm:p-6 cursor-pointer overflow-hidden preserve-3d"
+      style={{
+        rotateX,
+        rotateY,
+        transformPerspective: 800,
+        background: "var(--bg-card)",
+        boxShadow: "inset 0 0 0 1px var(--border)",
+      }}
+    >
+      {/* Hover spotlight following cursor */}
+      <motion.div
+        aria-hidden
+        className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
+        style={{
+          background: useTransform(
+            [glowX, glowY] as any,
+            ([gx, gy]: any) =>
+              `radial-gradient(220px 200px at ${gx} ${gy}, ${c.color}30, transparent 70%)`
+          ),
+          boxShadow: `inset 0 0 0 1px ${c.color}55`,
+        }}
+      />
+
+      {/* Big background ghost icon */}
+      <div className="absolute -bottom-3 -right-3 opacity-[0.07] pointer-events-none transition-transform duration-500 group-hover:scale-125 group-hover:rotate-12">
+        <Icon className="w-28 h-28" style={{ color: c.color }} strokeWidth={1.4} />
+      </div>
+
+      {/* Index numeral */}
+      <span
+        className="absolute top-3 right-3 text-[10.5px] font-mono tabular-nums uppercase tracking-[0.16em]"
+        style={{ color: "var(--text-muted)" }}
+      >
+        {String(idx + 1).padStart(2, "0")}
+      </span>
+
+      {/* Icon tile */}
+      <motion.div
+        whileHover={{ rotate: -8 }}
+        transition={{ type: "spring", stiffness: 380, damping: 16 }}
+        className="relative w-12 h-12 rounded-[12px] flex items-center justify-center mb-5"
+        style={{ background: `${c.color}20`, color: c.color }}
+      >
+        <Icon className="w-[24px] h-[24px]" strokeWidth={2} />
+      </motion.div>
+
+      {/* Name */}
+      <div className="relative">
+        <div
+          className="text-[16px] font-semibold mb-0.5 leading-tight"
+          style={{ fontFamily: "var(--font-display)" }}
+          dir="rtl"
+          lang="ur"
+        >
+          {c.nameUr}
+        </div>
+        <div
+          className="text-[14px] mb-4 font-editorial italic"
+          style={{
+            color: "var(--text-secondary)",
+            fontVariationSettings: '"opsz" 144',
+          }}
+        >
+          {c.nameEn}
+        </div>
+        <div className="flex items-center justify-between gap-2">
+          <span
+            className="text-[11px] font-mono font-semibold tracking-wide"
+            style={{ color: c.color }}
+          >
+            {c.jobs} kaam available
+          </span>
+          <ArrowUpRight
+            className="w-4 h-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            style={{ color: c.color }}
+          />
+        </div>
+      </div>
+    </motion.a>
+  );
+}
+
+const containerV: Variants = {
+  hidden: {},
+  show:   { transition: { staggerChildren: 0.04 } },
+};
 
 export default function CategoryGrid() {
   const root = useRef<HTMLDivElement>(null);
@@ -16,10 +139,10 @@ export default function CategoryGrid() {
 
     const ctx = gsap.context(() => {
       gsap.fromTo(".cat-card",
-        { opacity: 0, y: 30 },
+        { opacity: 0, y: 36 },
         {
-          opacity: 1, y: 0, duration: 0.55, ease: "power2.out",
-          stagger: { each: 0.04, from: "start" },
+          opacity: 1, y: 0, duration: 0.6, ease: "power2.out",
+          stagger: { each: 0.05, from: "start" },
           scrollTrigger: { trigger: root.current, start: "top 80%", once: true },
         });
     }, root);
@@ -27,88 +150,61 @@ export default function CategoryGrid() {
   }, []);
 
   return (
-    <section ref={root} className="py-24 lg:py-32 relative">
-      <div className="max-w-[1280px] mx-auto px-5 lg:px-8">
-        {/* Header */}
-        <div className="flex items-end justify-between flex-wrap gap-4 mb-12">
-          <div className="max-w-2xl">
-            <span className="inline-block text-[11px] uppercase tracking-[0.2em] font-semibold mb-3 font-mono"
-                  style={{ color: "var(--brand)" }}>
-              — Categories
+    <section ref={root} className="py-28 lg:py-36 relative">
+      <div className="max-w-[1400px] mx-auto px-5 lg:px-8">
+        {/* Section header */}
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: [0.25, 0.46, 0.45, 0.94] }}
+          className="flex items-end justify-between flex-wrap gap-8 mb-16"
+        >
+          <div className="max-w-3xl">
+            <span
+              className="inline-block text-[11px] uppercase tracking-[0.24em] font-mono mb-4"
+              style={{ color: "var(--brand)" }}
+            >
+              ✦ §03 — Categories
             </span>
-            <h2 className="text-section">Kaam Ka Qism Chunein</h2>
-            <p className="mt-3 text-[16px]" style={{ color: "var(--text-secondary)" }}>
-              50+ shehron mein 12 categories ke skilled professionals — sab verified, sab transparent.
+            <h2 className="text-section">
+              Twelve trades.
+              <br />
+              <span className="text-editorial-italic" style={{ color: "var(--brand)" }}>
+                One marketplace.
+              </span>
+            </h2>
+            <p className="mt-5 text-[16px] max-w-xl"
+               style={{ color: "var(--text-secondary)" }}>
+              Bijli ke kaam se le kar baghbani tak — Pakistan ke har shehar mein
+              verified pros, ek tap door.
             </p>
           </div>
-          <a
+          <motion.a
             href="/browse-jobs"
-            className="inline-flex items-center gap-1.5 text-[14px] font-semibold transition hover:gap-3"
+            data-cursor="link"
+            whileHover={{ x: 6 }}
+            transition={{ type: "spring", stiffness: 260, damping: 20 }}
+            className="inline-flex items-center gap-2 text-[14px] font-semibold tracking-wide"
             style={{ color: "var(--brand)" }}
           >
-            Sab Categories
-            <ArrowRight className="w-4 h-4" />
-          </a>
-        </div>
+            Browse all categories
+            <ArrowUpRight className="w-4 h-4" />
+          </motion.a>
+        </motion.div>
 
         {/* Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4">
-          {categories.map((c) => {
-            const Icon = c.icon;
-            return (
-              <motion.a
-                key={c.nameEn}
-                href={`/browse-jobs?category=${encodeURIComponent(c.nameEn)}`}
-                className="cat-card group relative rounded-[14px] p-4 sm:p-5 cursor-pointer overflow-hidden"
-                style={{
-                  background: "var(--bg-card)",
-                  boxShadow: "inset 0 0 0 1px var(--border)",
-                }}
-                whileHover={{ y: -4 }}
-                transition={{ type: "spring", stiffness: 320, damping: 22 }}
-              >
-                {/* Hover accent layer */}
-                <div
-                  className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none"
-                  style={{
-                    background: `radial-gradient(160% 110% at 0% 0%, ${c.color}18 0%, transparent 60%)`,
-                    boxShadow: `inset 0 0 0 1px ${c.color}55`,
-                  }}
-                />
-
-                {/* Icon tile */}
-                <div
-                  className="relative w-11 h-11 rounded-[10px] flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-105"
-                  style={{
-                    background: `${c.color}1F`,
-                    color: c.color,
-                  }}
-                >
-                  <Icon className="w-[22px] h-[22px]" strokeWidth={2} />
-                </div>
-
-                {/* Name */}
-                <div className="relative">
-                  <div
-                    className="text-[15px] font-semibold mb-0.5 leading-tight"
-                    style={{ fontFamily: "var(--font-jakarta)" }}
-                    dir="rtl"
-                    lang="ur"
-                  >
-                    {c.nameUr}
-                  </div>
-                  <div className="text-[13px] mb-3" style={{ color: "var(--text-secondary)" }}>
-                    {c.nameEn}
-                  </div>
-                  <div className="text-[11px] font-mono font-semibold tracking-wide"
-                       style={{ color: "var(--brand)" }}>
-                    {c.jobs} kaam available
-                  </div>
-                </div>
-              </motion.a>
-            );
-          })}
-        </div>
+        <motion.div
+          variants={containerV}
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, margin: "-80px" }}
+          className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 sm:gap-4 perspective-1000"
+        >
+          {categories.map((c, idx) => (
+            <CategoryCard key={c.nameEn} c={c} idx={idx} />
+          ))}
+        </motion.div>
       </div>
     </section>
   );

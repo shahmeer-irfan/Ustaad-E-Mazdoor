@@ -1,5 +1,7 @@
 import Navbar         from "@/components/home/Navbar";
+import CursorFollower from "@/components/home/CursorFollower";
 import Hero            from "@/components/home/Hero";
+import LiveTicker      from "@/components/home/LiveTicker";
 import StatsBar        from "@/components/home/StatsBar";
 import CategoryGrid    from "@/components/home/CategoryGrid";
 import HowItWorks      from "@/components/home/HowItWorks";
@@ -13,8 +15,10 @@ import SiteFooter      from "@/components/home/SiteFooter";
 export default function Home() {
   return (
     <main className="relative">
+      <CursorFollower />
       <Navbar />
       <Hero />
+      <LiveTicker />
       <StatsBar />
       <CategoryGrid />
       <HowItWorks />
