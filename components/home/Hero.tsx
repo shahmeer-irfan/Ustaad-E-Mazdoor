@@ -3,7 +3,6 @@
 import { useEffect, useRef } from "react";
 import {
   motion,
-  useScroll,
   useTransform,
   useMotionValue,
   useSpring,
@@ -119,11 +118,7 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", onMove);
   }, [px, py]);
 
-  // Scroll-based parallax for hero — pushes content up, shrinks slightly as you scroll
-  const { scrollY } = useScroll();
-  const heroY     = useTransform(scrollY, [0, 600], [0, -80]);
-  const heroScale = useTransform(scrollY, [0, 600], [1, 0.94]);
-  const heroOpac  = useTransform(scrollY, [0, 500], [1, 0]);
+  // (Hero scroll-fade effect removed — title stays fully visible while scrolling.)
 
   return (
     <section
@@ -187,10 +182,7 @@ export default function Hero() {
         className="top-[40%] right-[7%]" depth={0.8}  pointerX={spx} pointerY={spy} />
 
       {/* Content */}
-      <motion.div
-        style={{ y: heroY, scale: heroScale, opacity: heroOpac }}
-        className="max-w-[1400px] mx-auto px-5 lg:px-8 w-full relative"
-      >
+      <div className="max-w-[1400px] mx-auto px-5 lg:px-8 w-full relative">
         <motion.div
           initial="hidden"
           animate="show"
@@ -404,7 +396,7 @@ export default function Hero() {
           </span>
           <ChevronDown className="w-4 h-4 scroll-bounce" />
         </motion.div>
-      </motion.div>
+      </div>
     </section>
   );
 }
