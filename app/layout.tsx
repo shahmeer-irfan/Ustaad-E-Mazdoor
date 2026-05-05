@@ -11,6 +11,7 @@ import {
   Fraunces,
 } from "next/font/google";
 import SmoothScroll from "@/components/home/SmoothScroll";
+import CursorFollower from "@/components/home/CursorFollower";
 import { LanguageProvider } from "@/lib/i18n/LanguageContext";
 
 
@@ -72,6 +73,7 @@ export default function RootLayout({
         <body className="antialiased">
           <LanguageProvider>
             <TooltipProvider>
+              <CursorFollower />
               <SmoothScroll>{children}</SmoothScroll>
               <Toaster />
               <Sonner />
