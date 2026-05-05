@@ -10,16 +10,14 @@ import {
 import { Menu, X, Phone, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 import MagneticButton from "./MagneticButton";
-
-const navLinks = [
-  { label: "Kaam Dhundo",          href: "/browse-jobs"   },
-  { label: "Talent Dhundo",        href: "/freelancers"   },
-  { label: "Kaise Kaam Karta Hai", href: "/how-it-works"  },
-];
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { useAuth } from "@clerk/nextjs";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen]         = useState(false);
+  const { lang, setLang, t }    = useLanguage();
+  const { isSignedIn }          = useAuth();
 
   // Top scroll-progress bar
   const { scrollYProgress } = useScroll();
@@ -31,6 +29,12 @@ export default function Navbar() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const navLinks = [
+    { label: t("nav.browse_jobs"),  href: "/browse-jobs"  },
+    { label: t("nav.freelancers"),  href: "/freelancers"  },
+    { label: t("nav.how_it_works"), href: "/how-it-works" },
+  ];
 
   return (
     <motion.nav
@@ -89,7 +93,7 @@ export default function Navbar() {
         <div className="hidden lg:flex items-center gap-1">
           {navLinks.map((l) => (
             <Link
-              key={l.label}
+              key={l.href}
               href={l.href}
               data-cursor="link"
               className="relative px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition-colors group"
@@ -108,6 +112,21 @@ export default function Navbar() {
 
         {/* Right cluster */}
         <div className="hidden lg:flex items-center gap-2">
+          {/* Language Toggle */}
+          <button
+            id="lang-toggle"
+            onClick={() => setLang(lang === "en" ? "ur" : "en")}
+            aria-label="Toggle language"
+            className="px-3 py-1.5 rounded-full text-[13px] font-semibold font-mono transition-all hover:scale-105 active:scale-95"
+            style={{
+              color: "var(--brand)",
+              background: "var(--brand-dim)",
+              boxShadow: "inset 0 0 0 1px rgba(249,115,22,0.3)",
+            }}
+          >
+            {t("nav.lang_toggle")}
+          </button>
+
           <a
             href="tel:0300878223"
             data-cursor="link"
@@ -117,16 +136,28 @@ export default function Navbar() {
             <Phone className="w-3.5 h-3.5" />
             0300-USTAAD
           </a>
-          <Link
-            href="/sign-in"
-            data-cursor="link"
-            className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
-          >
-            Login
-          </Link>
+
+          {isSignedIn ? (
+            <Link
+              href="/dashboard"
+              data-cursor="link"
+              className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
+            >
+              {t("nav.dashboard")}
+            </Link>
+          ) : (
+            <Link
+              href="/sign-in"
+              data-cursor="link"
+              className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
+            >
+              {t("nav.sign_in")}
+            </Link>
+          )}
+
           <MagneticButton
             as="a"
-            href="/sign-up"
+            href={isSignedIn ? "/post-job" : "/sign-up"}
             strength={20}
             parallax={1.4}
             className="px-5 py-2.5 text-[14px] font-semibold rounded-full text-white"
@@ -136,7 +167,7 @@ export default function Navbar() {
               fontFamily: "var(--font-display)",
             }}
           >
-            Shuru Karo <ArrowUpRight className="w-4 h-4" />
+            {isSignedIn ? t("nav.post_job") : t("nav.sign_up")} <ArrowUpRight className="w-4 h-4" />
           </MagneticButton>
         </div>
 
@@ -175,7 +206,7 @@ export default function Navbar() {
             <div className="px-5 py-5 flex flex-col gap-1">
               {navLinks.map((l, i) => (
                 <motion.div
-                  key={l.label}
+                  key={l.href}
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.05 }}
@@ -190,6 +221,16 @@ export default function Navbar() {
                 </motion.div>
               ))}
               <div className="h-px my-2" style={{ background: "var(--border)" }} />
+
+              {/* Mobile language toggle */}
+              <button
+                onClick={() => setLang(lang === "en" ? "ur" : "en")}
+                className="px-3 py-3 text-left text-[14px] font-semibold"
+                style={{ color: "var(--brand)" }}
+              >
+                🌐 {t("nav.lang_toggle")}
+              </button>
+
               <a
                 href="tel:0300878223"
                 className="flex items-center gap-2 px-3 py-3 text-[14px] font-mono"
@@ -198,20 +239,30 @@ export default function Navbar() {
                 <Phone className="w-4 h-4" />
                 0300-USTAAD
               </a>
+              {isSignedIn ? (
+                <Link
+                  href="/dashboard"
+                  onClick={() => setOpen(false)}
+                  className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
+                >
+                  {t("nav.dashboard")}
+                </Link>
+              ) : (
+                <Link
+                  href="/sign-in"
+                  onClick={() => setOpen(false)}
+                  className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
+                >
+                  {t("nav.sign_in")}
+                </Link>
+              )}
               <Link
-                href="/sign-in"
-                onClick={() => setOpen(false)}
-                className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
-              >
-                Login
-              </Link>
-              <Link
-                href="/sign-up"
+                href={isSignedIn ? "/post-job" : "/sign-up"}
                 onClick={() => setOpen(false)}
                 className="mt-2 px-5 py-3 text-center text-[15px] font-semibold rounded-full text-white"
                 style={{ background: "var(--grad-brand)" }}
               >
-                Shuru Karo →
+                {isSignedIn ? t("nav.post_job") : t("nav.sign_up")} →
               </Link>
             </div>
           </motion.div>

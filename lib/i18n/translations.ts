@@ -1,0 +1,155 @@
+/**
+ * lib/i18n/translations.ts
+ *
+ * English and Roman-Urdu translation dictionary.
+ * Add new keys here; consume via the `useLanguage()` hook → `t("key")`.
+ */
+
+export type Lang = "en" | "ur";
+
+export const translations = {
+  // ── Navbar ──────────────────────────────────────────────────────────────
+  "nav.browse_jobs":   { en: "Browse Jobs",      ur: "Kaam Dhundo" },
+  "nav.freelancers":   { en: "Find Mazdoors",    ur: "Mazdoor Dhundo" },
+  "nav.how_it_works":  { en: "How It Works",     ur: "Kaise Kaam Karta Hai" },
+  "nav.post_job":      { en: "Post a Job",       ur: "Kaam Post Karo" },
+  "nav.dashboard":     { en: "Dashboard",        ur: "Dashboard" },
+  "nav.sign_in":       { en: "Sign In",          ur: "Login Karo" },
+  "nav.sign_up":       { en: "Get Started",      ur: "Shuru Karo" },
+  "nav.sign_out":      { en: "Sign Out",         ur: "Logout Karo" },
+  "nav.lang_toggle":   { en: "اردو",             ur: "English" },
+
+  // ── Hero ────────────────────────────────────────────────────────────────
+  "hero.tagline":      { en: "Pakistan's Skilled Labour Marketplace", ur: "Pakistan ka Apna Kaam ka Platform" },
+  "hero.heading1":     { en: "Find Verified",    ur: "Verified" },
+  "hero.heading2":     { en: "Skilled Workers",  ur: "Kaarigar Dhundo" },
+  "hero.heading3":     { en: "Instantly",        ur: "Fauran" },
+  "hero.subheading":   { en: "Connect with 10,000+ verified tradesmen across 50+ Pakistani cities. Electricians, plumbers, carpenters, and more.", ur: "50+ Pakistani shahron mein 10,000+ verified kaarigar. Bijli wala, plumber, carpenter, aur bhi bahut kuch." },
+  "hero.search_placeholder": { en: "What work do you need? (e.g. Electrician, Plumber…)", ur: "Kaunsa kaam chahiye? (jaise Bijli wala, Plumber…)" },
+  "hero.cta_find":     { en: "Find a Worker",   ur: "Kaarigar Dhundo" },
+  "hero.cta_post":     { en: "Post a Job",       ur: "Kaam Post Karo" },
+  "hero.stats_workers":{ en: "Verified Workers", ur: "Verified Kaarigar" },
+  "hero.stats_cities": { en: "Cities",           ur: "Shehar" },
+  "hero.stats_jobs":   { en: "Jobs Posted",      ur: "Kaam Post Huay" },
+  "hero.stats_rate":   { en: "Success Rate",     ur: "Kamyabi Ki Dar" },
+
+  // ── Browse Jobs ─────────────────────────────────────────────────────────
+  "jobs.title":        { en: "Available Jobs",   ur: "Available Kaam" },
+  "jobs.subtitle":     { en: "Find new work and start today — verified clients only.", ur: "Naya kaam dhundo aur aaj hi start karo — verified clients only." },
+  "jobs.search_placeholder": { en: "Search jobs…", ur: "Kaunsa kaam dhundh rahe ho?" },
+  "jobs.all_categories": { en: "All Categories", ur: "Sab Categories" },
+  "jobs.all_locations":{ en: "All Locations",    ur: "Sab Shehar" },
+  "jobs.found":        { en: "jobs found",       ur: "kaam mile" },
+  "jobs.no_results":   { en: "No jobs found — try changing your filters.", ur: "Koi kaam nahi mila — filters badal ke dobara try karo." },
+  "jobs.loading":      { en: "Searching…",       ur: "Dhundh rahe hain…" },
+  "jobs.apply":        { en: "Apply Now",        ur: "Apply Karo" },
+  "jobs.proposals":    { en: "proposals",        ur: "proposals" },
+  "jobs.posted":       { en: "Posted",           ur: "Posted" },
+
+  // ── Post Job ────────────────────────────────────────────────────────────
+  "post.title":        { en: "Post a Job",       ur: "Kaam Post Karo" },
+  "post.subtitle":     { en: "Post your job and find the right person in minutes.", ur: "Apna kaam yahan post karo aur minutes mein sahi banda dhundo." },
+  "post.job_title":    { en: "Job Title",        ur: "Kaam ka Naam" },
+  "post.category":     { en: "Service Category", ur: "Service Category" },
+  "post.description":  { en: "Job Details",      ur: "Kaam ki Details" },
+  "post.budget_type":  { en: "Budget Type",      ur: "Budget Type" },
+  "post.budget_min":   { en: "Min Budget (PKR)", ur: "Min Budget (PKR)" },
+  "post.budget_max":   { en: "Max Budget (PKR)", ur: "Max Budget (PKR)" },
+  "post.location":     { en: "Location",         ur: "Jagah" },
+  "post.duration":     { en: "Project Duration", ur: "Kaam ka Waqt" },
+  "post.skills":       { en: "Skills Required",  ur: "Zaruri Skills" },
+  "post.submit":       { en: "Post Job",         ur: "Kaam Post Karo" },
+  "post.submitting":   { en: "Posting…",         ur: "Post ho raha hai…" },
+  "post.cancel":       { en: "Cancel",           ur: "Wapas Jao" },
+  "post.success":      { en: "Job posted successfully!", ur: "Shabaash! Aapka kaam post ho gaya." },
+
+  // ── Dashboard ───────────────────────────────────────────────────────────
+  "dash.title":        { en: "Dashboard",        ur: "Dashboard" },
+  "dash.welcome":      { en: "Welcome back",     ur: "Khush Amdeed" },
+  "dash.profile":      { en: "Profile",          ur: "Profile" },
+  "dash.my_jobs":      { en: "My Jobs",          ur: "Mera Kaam" },
+  "dash.proposals":    { en: "Proposals",        ur: "Proposals" },
+  "dash.edit_profile": { en: "Edit Profile",     ur: "Profile Edit Karo" },
+  "dash.save":         { en: "Save",             ur: "Save Karo" },
+  "dash.cancel":       { en: "Cancel",           ur: "Cancel" },
+  "dash.full_name":    { en: "Full Name",        ur: "Poora Naam" },
+  "dash.email":        { en: "Email",            ur: "Email" },
+  "dash.location":     { en: "Location",         ur: "Shehar" },
+  "dash.phone":        { en: "Phone",            ur: "Phone Number" },
+  "dash.hourly_rate":  { en: "Hourly Rate (PKR)", ur: "Ghantay ka Kiraya (PKR)" },
+  "dash.account_type": { en: "Account Type",    ur: "Account Type" },
+  "dash.bio":          { en: "Bio",              ur: "Apne Baare Mein" },
+  "dash.verified":     { en: "Verified",         ur: "Verified" },
+  "dash.completed_jobs": { en: "Completed Jobs", ur: "Mukamal Kaam" },
+  "dash.success_rate": { en: "Success Rate",     ur: "Kamyabi" },
+  "dash.active_proposals": { en: "Active Proposals", ur: "Active Proposals" },
+  "dash.no_jobs":      { en: "No jobs posted yet.", ur: "Abhi koi kaam post nahi kiya." },
+  "dash.post_first_job": { en: "Post Your First Job", ur: "Pehla Kaam Post Karo" },
+  "dash.post_new_job": { en: "Post New Job",    ur: "Naya Kaam Post Karo" },
+  "dash.no_proposals": { en: "No proposals yet.", ur: "Abhi koi proposal nahi bheja." },
+  "dash.browse_jobs":  { en: "Browse Jobs",      ur: "Kaam Dhundo" },
+  "dash.view_details": { en: "View Details",     ur: "Tafseel Dekho" },
+  "dash.manage_jobs":  { en: "Manage your job postings.", ur: "Apne kaam manage karo." },
+  "dash.track_proposals": { en: "Track your submitted proposals.", ur: "Apne proposals ki khaber rakho." },
+  "dash.skills":       { en: "Skills",           ur: "Skills" },
+  "dash.add_skills":   { en: "Add skills (comma separated)", ur: "Skills likhein (comma se alag karo)" },
+  "dash.save_skills":  { en: "Save Skills",      ur: "Skills Save Karo" },
+  "dash.set_role":     { en: "Set your role to get started", ur: "Shuru karne ke liye apna role chunein" },
+
+  // ── Onboarding ──────────────────────────────────────────────────────────
+  "onboard.title":     { en: "Welcome to Ustaad!",  ur: "Ustaad mein Khush Amdeed!" },
+  "onboard.question":  { en: "How are you joining us?", ur: "Aap kaise join kar rahe hain?" },
+  "onboard.client_title": { en: "I Need Work Done",   ur: "Mujhe Kaam Karwana Hai" },
+  "onboard.client_desc":  { en: "Hire verified skilled workers for home repairs, construction, and more.", ur: "Ghar ki marammat, construction ya koi bhi kaam ke liye verified kaarigar dhundein." },
+  "onboard.worker_title": { en: "I Want to Find Work", ur: "Mujhe Kaam Chahiye" },
+  "onboard.worker_desc":  { en: "Find jobs in your city and grow your career as a skilled professional.", ur: "Apne shehar mein kaam dhundein aur apna career banao." },
+  "onboard.continue":  { en: "Continue",          ur: "Aagay Badho" },
+  "onboard.selecting": { en: "Setting up…",       ur: "Tayyar ho raha hai…" },
+
+  // ── Job Detail ──────────────────────────────────────────────────────────
+  "job.submit_proposal": { en: "Submit Proposal", ur: "Proposal Bhejo" },
+  "job.proposals_received": { en: "Proposals Received", ur: "Proposals Aye" },
+  "job.similar_jobs":  { en: "Similar Jobs",      ur: "Milte Julte Kaam" },
+  "job.skills_required": { en: "Skills Required", ur: "Zaruri Skills" },
+  "job.budget":        { en: "Budget",            ur: "Budget" },
+  "job.duration":      { en: "Duration",          ur: "Waqt" },
+  "job.location":      { en: "Location",          ur: "Jagah" },
+  "job.posted_by":     { en: "Posted by",         ur: "Kaam Dene Wala" },
+  "job.accept":        { en: "Accept",            ur: "Manzoor Karo" },
+  "job.reject":        { en: "Reject",            ur: "Nakaaro" },
+  "job.cover_letter":  { en: "Cover Letter",      ur: "Apni Baat" },
+  "job.proposed_rate": { en: "Your Rate (PKR)",   ur: "Aapka Rate (PKR)" },
+  "job.delivery_time": { en: "Delivery Time",     ur: "Kaam Khatam Karne ka Waqt" },
+  "job.ai_match":      { en: "AI Match Score",    ur: "AI Match Score" },
+  "job.match_why":     { en: "Why this match?",   ur: "Yeh match kyun?" },
+
+  // ── Freelancer ──────────────────────────────────────────────────────────
+  "fl.hire":           { en: "Hire Now",          ur: "Kaam Do" },
+  "fl.per_hour":       { en: "/hr",               ur: "/ghanta" },
+  "fl.reviews":        { en: "reviews",           ur: "reviews" },
+  "fl.skills":         { en: "Skills",            ur: "Skills" },
+  "fl.bio":            { en: "About",             ur: "Apne Baare Mein" },
+  "fl.completed":      { en: "completed jobs",    ur: "mukamal kaam" },
+  "fl.success_rate":   { en: "success rate",      ur: "kamyabi ki dar" },
+  "fl.no_reviews":     { en: "No reviews yet.",   ur: "Abhi koi review nahi." },
+  "fl.response_time":  { en: "Response Time",     ur: "Jawab Dene ka Waqt" },
+
+  // ── Common ──────────────────────────────────────────────────────────────
+  "common.loading":    { en: "Loading…",          ur: "Load ho raha hai…" },
+  "common.error":      { en: "Something went wrong. Please try again.", ur: "Kuch gadbad ho gayi. Dobara try karo." },
+  "common.not_found":  { en: "Not found.",        ur: "Nahi mila." },
+  "common.back":       { en: "Go Back",           ur: "Wapas Jao" },
+  "common.save":       { en: "Save",              ur: "Save Karo" },
+  "common.cancel":     { en: "Cancel",            ur: "Cancel" },
+  "common.status_open":      { en: "Open",        ur: "Khula" },
+  "common.status_accepted":  { en: "Accepted",    ur: "Manzoor" },
+  "common.status_rejected":  { en: "Rejected",    ur: "Nakaar Diya" },
+  "common.status_pending":   { en: "Pending",     ur: "Zair Ghour" },
+  "common.status_completed": { en: "Completed",   ur: "Mukamal" },
+  "common.client":     { en: "Client",            ur: "Kaam Dene Wala" },
+  "common.freelancer": { en: "Mazdoor",           ur: "Mazdoor" },
+  "common.fixed":      { en: "Fixed Price",       ur: "Poori Rakam" },
+  "common.hourly":     { en: "Hourly",            ur: "Ghante ke Hisaab se" },
+} satisfies Record<string, { en: string; ur: string }>;
+
+export type TranslationKey = keyof typeof translations;

@@ -11,6 +11,8 @@ import {
   Fraunces,
 } from "next/font/google";
 import SmoothScroll from "@/components/home/SmoothScroll";
+import { LanguageProvider } from "@/lib/i18n/LanguageContext";
+
 
 // Display — variable, characterful, optical-sized
 const bricolage = Bricolage_Grotesque({
@@ -68,11 +70,13 @@ export default function RootLayout({
         className={`${bricolage.variable} ${fraunces.variable} ${jakarta.variable} ${mono.variable}`}
       >
         <body className="antialiased">
-          <TooltipProvider>
-            <SmoothScroll>{children}</SmoothScroll>
-            <Toaster />
-            <Sonner />
-          </TooltipProvider>
+          <LanguageProvider>
+            <TooltipProvider>
+              <SmoothScroll>{children}</SmoothScroll>
+              <Toaster />
+              <Sonner />
+            </TooltipProvider>
+          </LanguageProvider>
         </body>
       </html>
     </ClerkProvider>
