@@ -7,17 +7,31 @@ import {
   useScroll,
   useSpring,
 } from "framer-motion";
-import { Menu, X, Phone, ArrowUpRight } from "lucide-react";
+import { Menu, X, Phone, ArrowUpRight, ArrowLeftRight, LogOut } from "lucide-react";
 import Link from "next/link";
 import MagneticButton from "./MagneticButton";
+import UserMenu from "./UserMenu";
 import { useLanguage } from "@/lib/i18n/LanguageContext";
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useClerk } from "@clerk/nextjs";
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen]         = useState(false);
   const { lang, setLang, t }    = useLanguage();
   const { isSignedIn }          = useAuth();
+  const { signOut }             = useClerk();
+
+  const handleMobileSwitchRole = async () => {
+    setOpen(false);
+    try {
+      const r = await fetch("/api/profile/switch-role", { method: "POST" });
+      if (r.ok) window.location.reload();
+    } catch {}
+  };
+  const handleMobileSignOut = async () => {
+    setOpen(false);
+    await signOut({ redirectUrl: "/" });
+  };
 
   // Top scroll-progress bar
   const { scrollYProgress } = useScroll();
@@ -138,37 +152,48 @@ export default function Navbar() {
           </a>
 
           {isSignedIn ? (
-            <Link
-              href="/dashboard"
-              data-cursor="link"
-              className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
-            >
-              {t("nav.dashboard")}
-            </Link>
+            <>
+              <MagneticButton
+                as="a"
+                href="/post-job"
+                strength={20}
+                parallax={1.4}
+                className="px-5 py-2.5 text-[14px] font-semibold rounded-full text-white"
+                style={{
+                  background: "var(--grad-brand)",
+                  boxShadow: "0 8px 24px -8px var(--brand-glow)",
+                  fontFamily: "var(--font-display)",
+                }}
+              >
+                {t("nav.post_job")} <ArrowUpRight className="w-4 h-4" />
+              </MagneticButton>
+              <UserMenu />
+            </>
           ) : (
-            <Link
-              href="/sign-in"
-              data-cursor="link"
-              className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
-            >
-              {t("nav.sign_in")}
-            </Link>
+            <>
+              <Link
+                href="/sign-in"
+                data-cursor="link"
+                className="px-4 py-2 text-[14px] font-medium text-[color:var(--text-secondary)] hover:text-[color:var(--text-primary)] transition"
+              >
+                {t("nav.sign_in")}
+              </Link>
+              <MagneticButton
+                as="a"
+                href="/sign-up"
+                strength={20}
+                parallax={1.4}
+                className="px-5 py-2.5 text-[14px] font-semibold rounded-full text-white"
+                style={{
+                  background: "var(--grad-brand)",
+                  boxShadow: "0 8px 24px -8px var(--brand-glow)",
+                  fontFamily: "var(--font-display)",
+                }}
+              >
+                {t("nav.sign_up")} <ArrowUpRight className="w-4 h-4" />
+              </MagneticButton>
+            </>
           )}
-
-          <MagneticButton
-            as="a"
-            href={isSignedIn ? "/post-job" : "/sign-up"}
-            strength={20}
-            parallax={1.4}
-            className="px-5 py-2.5 text-[14px] font-semibold rounded-full text-white"
-            style={{
-              background: "var(--grad-brand)",
-              boxShadow: "0 8px 24px -8px var(--brand-glow)",
-              fontFamily: "var(--font-display)",
-            }}
-          >
-            {isSignedIn ? t("nav.post_job") : t("nav.sign_up")} <ArrowUpRight className="w-4 h-4" />
-          </MagneticButton>
         </div>
 
         {/* Mobile toggle */}
@@ -240,30 +265,59 @@ export default function Navbar() {
                 0300-USTAAD
               </a>
               {isSignedIn ? (
-                <Link
-                  href="/dashboard"
-                  onClick={() => setOpen(false)}
-                  className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
-                >
-                  {t("nav.dashboard")}
-                </Link>
+                <>
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
+                  >
+                    {t("nav.dashboard")}
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleMobileSwitchRole}
+                    className="flex items-center gap-2 px-3 py-3 text-left text-[15px] text-[color:var(--text-primary)] hover:bg-[color:var(--bg-elevated)] rounded-lg"
+                  >
+                    <ArrowLeftRight className="w-4 h-4" style={{ color: "var(--brand)" }} />
+                    {t("nav.switch_to_freelancer")} / {t("nav.switch_to_client")}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleMobileSignOut}
+                    className="flex items-center gap-2 px-3 py-3 text-left text-[15px] hover:bg-[rgba(239,68,68,0.08)] rounded-lg"
+                    style={{ color: "#fca5a5" }}
+                  >
+                    <LogOut className="w-4 h-4" />
+                    {t("nav.sign_out")}
+                  </button>
+                  <Link
+                    href="/post-job"
+                    onClick={() => setOpen(false)}
+                    className="mt-2 px-5 py-3 text-center text-[15px] font-semibold rounded-full text-white"
+                    style={{ background: "var(--grad-brand)" }}
+                  >
+                    {t("nav.post_job")} →
+                  </Link>
+                </>
               ) : (
-                <Link
-                  href="/sign-in"
-                  onClick={() => setOpen(false)}
-                  className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
-                >
-                  {t("nav.sign_in")}
-                </Link>
+                <>
+                  <Link
+                    href="/sign-in"
+                    onClick={() => setOpen(false)}
+                    className="px-3 py-3 text-[15px] text-[color:var(--text-primary)]"
+                  >
+                    {t("nav.sign_in")}
+                  </Link>
+                  <Link
+                    href="/sign-up"
+                    onClick={() => setOpen(false)}
+                    className="mt-2 px-5 py-3 text-center text-[15px] font-semibold rounded-full text-white"
+                    style={{ background: "var(--grad-brand)" }}
+                  >
+                    {t("nav.sign_up")} →
+                  </Link>
+                </>
               )}
-              <Link
-                href={isSignedIn ? "/post-job" : "/sign-up"}
-                onClick={() => setOpen(false)}
-                className="mt-2 px-5 py-3 text-center text-[15px] font-semibold rounded-full text-white"
-                style={{ background: "var(--grad-brand)" }}
-              >
-                {isSignedIn ? t("nav.post_job") : t("nav.sign_up")} →
-              </Link>
             </div>
           </motion.div>
         )}
