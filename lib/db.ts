@@ -1,19 +1,13 @@
-import { Pool } from 'pg';
-
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-  ssl: { rejectUnauthorized: false },
-  max: 10,
-  idleTimeoutMillis: 10_000,
-  connectionTimeoutMillis: 8_000,
-  keepAlive: true,
-});
-
-// Supabase pooler can drop idle clients server-side; the pg.Pool then surfaces
-// them as "Connection terminated unexpectedly". Swallow & log so subsequent
-// queries grab a fresh client instead of crashing the whole pool.
-pool.on('error', (err) => {
-  console.error('[pg.Pool] idle client error:', err.message);
-});
-
-export default pool;
+/**
+ * lib/db.ts — canonical database export
+ *
+ * Delegates to lib/patterns/Singleton.ts which implements the Singleton pattern.
+ * All route handlers should import from here: `import pool from "@/lib/db"`
+ *
+ * Two modes (selected automatically at startup):
+ *   1. pg.Pool  — when DATABASE_URL is set (production / Supabase pooler)
+ *   2. Supabase JS REST adapter — when only NEXT_PUBLIC_SUPABASE_URL is set
+ *
+ * Both expose the same pool.query(sql, params) interface — no consumer changes needed.
+ */
+export { getPool, default } from '@/lib/patterns/Singleton';
