@@ -15,7 +15,7 @@
  * SRS reference: DC-2 — pattern #2; supports REQ-1.x (Authentication & RBAC).
  */
 
-export type UserType = "customer" | "freelancer" | "admin";
+export type UserType = "client" | "freelancer" | "admin";
 
 export interface ProfileRow {
   id:        string;
@@ -65,7 +65,7 @@ export class UserFactory {
    */
   static create(row: ProfileRow): User {
     switch (row.user_type) {
-      case "customer":   return new Customer(row);
+      case "client":     return new Customer(row);
       case "freelancer": return new Worker(row);
       case "admin":      return new Admin(row);
       default: {

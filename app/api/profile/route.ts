@@ -1,17 +1,14 @@
 import { NextResponse } from 'next/server';
 import pool from '@/lib/db';
-import { auth } from '@clerk/nextjs/server';
+import { auth, currentUser } from '@clerk/nextjs/server';
 
-// GET current user's profile
+// GET current user's profile — auto-creates on first access (no webhook needed locally)
 export async function GET() {
   try {
     const { userId } = await auth();
 
     if (!userId) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const query = `
@@ -25,13 +22,32 @@ export async function GET() {
       GROUP BY p.id
     `;
 
-    const result = await pool.query(query, [userId]);
+    let result = await pool.query(query, [userId]);
 
+    // ── Auto-create profile on first access (replaces webhook dependency locally) ──
     if (result.rows.length === 0) {
-      return NextResponse.json(
-        { error: 'Profile not found' },
-        { status: 404 }
+      const clerkUser = await currentUser();
+      const email =
+        clerkUser?.emailAddresses?.[0]?.emailAddress ??
+        `${userId}@unknown.com`;
+      const fullName =
+        clerkUser?.fullName ??
+        clerkUser?.username ??
+        email.split('@')[0];
+
+      await pool.query(
+        `INSERT INTO profiles (clerk_id, email, full_name, created_at, updated_at)
+         VALUES ($1, $2, $3, NOW(), NOW())
+         ON CONFLICT (clerk_id) DO NOTHING`,
+        [userId, email, fullName]
       );
+
+      // Re-fetch after insert
+      result = await pool.query(query, [userId]);
+
+      if (result.rows.length === 0) {
+        return NextResponse.json({ error: 'Profile not found' }, { status: 404 });
+      }
     }
 
     const profile = result.rows[0];
@@ -83,7 +99,16 @@ export async function PUT(request: Request) {
       phone,
       hourlyRate,
       avatarUrl,
+      userType,
     } = body;
+
+    // Validate userType if provided
+    if (userType && !['client', 'freelancer'].includes(userType)) {
+      return NextResponse.json(
+        { error: 'Invalid user type. Must be "client" or "freelancer"' },
+        { status: 400 }
+      );
+    }
 
     const query = `
       UPDATE profiles
@@ -94,8 +119,9 @@ export async function PUT(request: Request) {
         phone = COALESCE($4, phone),
         hourly_rate = COALESCE($5, hourly_rate),
         avatar_url = COALESCE($6, avatar_url),
+        user_type = COALESCE($7, user_type),
         updated_at = NOW()
-      WHERE clerk_id = $7
+      WHERE clerk_id = $8
       RETURNING *
     `;
 
@@ -106,6 +132,7 @@ export async function PUT(request: Request) {
       phone || null,
       hourlyRate || null,
       avatarUrl || null,
+      userType || null,
       userId,
     ]);
 

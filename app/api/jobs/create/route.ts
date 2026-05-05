@@ -129,6 +129,17 @@ export async function POST(request: Request) {
       [categoryId]
     );
 
+    // Notify observers (Observer pattern — REQ-5.x)
+    try {
+      const { notifications } = await import('@/lib/patterns/NotificationObserver');
+      await notifications.publish({
+        type: 'job.posted',
+        jobId,
+        clientId,
+        title,
+      });
+    } catch { /* observer failure must not break the main flow */ }
+
     return NextResponse.json({
       success: true,
       jobId,

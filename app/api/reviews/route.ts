@@ -83,23 +83,14 @@ export async function POST(request: NextRequest) {
       [jobId, freelancerId, clientId, rating, comment || null]
     );
 
-    // Update freelancer's average rating
-    await pool.query(
-      `UPDATE profiles 
-       SET avg_rating = (
-         SELECT AVG(rating) FROM reviews WHERE freelancer_id = $1
-       ),
-       review_count = (
-         SELECT COUNT(*) FROM reviews WHERE freelancer_id = $1
-       )
-       WHERE id = $1`,
-      [freelancerId]
-    );
+    // Note: avg rating is computed via JOIN in /api/profile and /api/freelancers
+    // No denormalised column to update.
 
     return NextResponse.json({
       message: 'Review submitted successfully',
       review: result.rows[0]
     });
+
   } catch (error) {
     console.error('Error creating review:', error);
     return NextResponse.json(
