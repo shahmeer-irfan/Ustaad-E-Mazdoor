@@ -1,533 +1,548 @@
 "use client";
 
-import { use, useEffect, useState } from "react";
-import { useUser } from "@clerk/nextjs";
-import { toast } from "@/components/ui/use-toast";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
+import { useAuth } from "@clerk/nextjs";
+import Link from "next/link";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import { FullPageLoader } from "@/components/Loader";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ProposalDialog } from "@/components/ProposalDialog";
-import { ReviewDialog } from "@/components/ReviewDialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { InlineLoader, FullPageLoader } from "@/components/Loader";
-import Link from "next/link";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
+import { toast } from "@/components/ui/use-toast";
 import {
-  MapPin,
-  Clock,
-  DollarSign,
-  Briefcase,
-  Star,
-  Send,
-  Share2,
-  Bookmark,
-  CheckCircle,
-  XCircle,
-  AlertCircle,
+  MapPin, Clock, DollarSign, Briefcase, Star,
+  FileText, Eye, Users, CheckCircle, XCircle,
+  ArrowLeft, Zap, ChevronRight, Send,
 } from "lucide-react";
 
-export default function JobDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
-  const { user } = useUser();
-  const [job, setJob] = useState<any>(null);
-  const [similarJobs, setSimilarJobs] = useState<any[]>([]);
-  const [proposals, setProposals] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [proposalDialogOpen, setProposalDialogOpen] = useState(false);
-  const [reviewDialogOpen, setReviewDialogOpen] = useState(false);
-  const [selectedFreelancer, setSelectedFreelancer] = useState<{ id: string; name: string } | null>(null);
-  const [updatingProposal, setUpdatingProposal] = useState<string | null>(null);
+interface Job {
+  id: string;
+  title: string;
+  description: string;
+  budget: string;
+  budgetMin: number;
+  budgetMax: number;
+  budgetType: string;
+  location: string;
+  duration: string;
+  postedTime: string;
+  category: string;
+  skillsRequired: string[];
+  proposals: number;
+  views: number;
+  status: string;
+  client: {
+    name: string;
+    rating: string;
+    reviews: number;
+    jobsPosted: number;
+    hireRate: string;
+    memberSince: string;
+  };
+}
 
-  const userRole = user?.unsafeMetadata?.role as string | undefined;
-  const isClient = userRole === 'client';
-  const isFreelancer = userRole === 'freelancer';
+interface Proposal {
+  id: string;
+  freelancer_name: string;
+  freelancer_avatar: string;
+  cover_letter: string;
+  proposed_budget: number;
+  proposed_duration: string;
+  status: string;
+  hourly_rate: number;
+  success_rate: number;
+  avg_rating: string;
+  review_count: number;
+  created_at: string;
+}
+
+interface SimilarJob {
+  id: string;
+  title: string;
+  budget: string;
+  location: string;
+  postedTime: string;
+}
+
+interface ProposalForm {
+  coverLetter: string;
+  proposedBudget: string;
+  proposedDuration: string;
+}
+
+export default function JobDetailPage() {
+  const params   = useParams();
+  const router   = useRouter();
+  const { isSignedIn, isLoaded } = useAuth();
+  const { t }    = useLanguage();
+
+  const [job, setJob]                   = useState<Job | null>(null);
+  const [similarJobs, setSimilarJobs]   = useState<SimilarJob[]>([]);
+  const [proposals, setProposals]       = useState<Proposal[]>([]);
+  const [profile, setProfile]           = useState<{ userType: string; id: string } | null>(null);
+  const [loading, setLoading]           = useState(true);
+  const [proposalOpen, setProposalOpen] = useState(false);
+  const [submitting, setSubmitting]     = useState(false);
+  const [updatingId, setUpdatingId]     = useState<string | null>(null);
+  const [matchScore, setMatchScore]     = useState<{ score: number; explanation: string } | null>(null);
+  const [proposalForm, setProposalForm] = useState<ProposalForm>({
+    coverLetter: "",
+    proposedBudget: "",
+    proposedDuration: "",
+  });
+
+  const jobId = params.id as string;
 
   useEffect(() => {
-    fetchJobDetails();
-  }, [id]);
+    fetchJobData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [jobId]);
 
   useEffect(() => {
-    if (isClient && job) {
-      fetchProposals();
-    }
-  }, [id, isClient, job?.id]);
+    if (isLoaded && isSignedIn) fetchProfile();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isLoaded, isSignedIn, jobId]);
 
-  const fetchJobDetails = async () => {
+  const fetchJobData = async () => {
     try {
-      const response = await fetch(`/api/jobs/${id}`);
-      if (!response.ok) throw new Error('Job not found');
-      const data = await response.json();
+      setLoading(true);
+      const res = await fetch(`/api/jobs/${jobId}`);
+      if (!res.ok) { router.push("/browse-jobs"); return; }
+      const data = await res.json();
       setJob(data.job);
       setSimilarJobs(data.similarJobs || []);
-    } catch (error) {
-      console.error('Failed to fetch job:', error);
+    } catch {
+      router.push("/browse-jobs");
     } finally {
       setLoading(false);
     }
   };
 
-  const fetchProposals = async () => {
+  const fetchProfile = async () => {
     try {
-      const response = await fetch(`/api/proposals?jobId=${id}`);
-      if (response.ok) {
-        const data = await response.json();
-        setProposals(data.proposals || []);
-      } else if (response.status === 404) {
-        // Profile not found - user might not be synced yet
-        console.log('Profile not found - proposals cannot be loaded');
-        setProposals([]);
-      } else {
-        console.error('Failed to fetch proposals:', response.status);
-        setProposals([]);
+      const res = await fetch("/api/profile");
+      if (!res.ok) return;
+      const data = await res.json();
+      setProfile({ userType: data.profile.userType, id: data.profile.id });
+
+      if (data.profile.userType === "client") {
+        const pRes = await fetch(`/api/proposals?jobId=${jobId}&role=client`);
+        if (pRes.ok) {
+          const pData = await pRes.json();
+          setProposals(pData.proposals || []);
+        }
       }
-    } catch (error) {
-      console.error('Failed to fetch proposals:', error);
-      setProposals([]);
-    }
+    } catch { /* non-critical */ }
   };
 
-  const handleProposalAction = async (proposalId: string, status: 'accepted' | 'rejected') => {
-    setUpdatingProposal(proposalId);
+  const handleSubmitProposal = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!proposalForm.coverLetter || !proposalForm.proposedBudget) return;
     try {
-      const response = await fetch(`/api/proposals/${proposalId}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status }),
+      setSubmitting(true);
+      const res = await fetch("/api/proposals", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jobId,
+          coverLetter: proposalForm.coverLetter,
+          proposedBudget: parseFloat(proposalForm.proposedBudget),
+          proposedDuration: proposalForm.proposedDuration,
+        }),
       });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error || 'Failed to update proposal');
+      if (!res.ok) {
+        const err = await res.json();
+        throw new Error(err.error || "Failed to submit proposal");
       }
-
-      toast({
-        title: "Success!",
-        description: `Proposal ${status} successfully!`,
-      });
-      fetchProposals();
-      fetchJobDetails(); // Refresh job to update proposal count and status
-    } catch (error: any) {
-      console.error('Failed to update proposal:', error);
-      toast({
-        title: "Error",
-        description: error.message || 'Failed to update proposal',
-        variant: "destructive",
-      });
+      toast({ title: "Proposal Submitted!", description: "The client will be notified." });
+      setProposalOpen(false);
+      setProposalForm({ coverLetter: "", proposedBudget: "", proposedDuration: "" });
+      fetchJobData();
+    } catch (err: any) {
+      toast({ title: "Error", description: err.message || t("common.error"), variant: "destructive" });
     } finally {
-      setUpdatingProposal(null);
+      setSubmitting(false);
     }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <InlineLoader message="Loading job details..." />
-        <Footer />
-      </div>
-    );
-  }
+  const handleProposalAction = async (proposalId: string, action: "accepted" | "rejected") => {
+    try {
+      setUpdatingId(proposalId);
+      const res = await fetch(`/api/proposals/${proposalId}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: action }),
+      });
+      if (!res.ok) throw new Error("Failed to update proposal");
+      setProposals((prev) =>
+        prev.map((p) => (p.id === proposalId ? { ...p, status: action } : p))
+      );
+      toast({
+        title: action === "accepted" ? "Proposal Accepted!" : "Proposal Rejected",
+        description: action === "accepted" ? "The freelancer has been notified." : "The proposal has been declined.",
+      });
+    } catch {
+      toast({ title: "Error", description: t("common.error"), variant: "destructive" });
+    } finally {
+      setUpdatingId(null);
+    }
+  };
 
-  if (!job) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navigation />
-        <div className="container mx-auto px-4 py-20 text-center">
-          <h1 className="text-3xl font-bold mb-4">Job Not Found</h1>
-          <p className="text-muted-foreground mb-8">The job you're looking for doesn't exist or has been removed.</p>
-          <Button asChild>
-            <Link href="/browse-jobs">Browse All Jobs</Link>
-          </Button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
+  if (loading) return <FullPageLoader />;
+  if (!job)    return null;
+
+  const isClient     = profile?.userType === "client";
+  const isFreelancer = profile?.userType === "freelancer";
+
+  const statusColor = ({
+    open:        "bg-emerald-500/15 text-emerald-400 border-emerald-500/30",
+    in_progress: "bg-blue-500/15 text-blue-400 border-blue-500/30",
+    completed:   "bg-gray-500/15 text-gray-400 border-gray-500/30",
+    cancelled:   "bg-red-500/15 text-red-400 border-red-500/30",
+  } as Record<string, string>)[job.status] ?? "bg-gray-500/15 text-gray-400";
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       <Navigation />
+      <main className="min-h-screen pt-[88px] pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
-      <div className="container mx-auto px-4 py-8">
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Job Header */}
-            <Card className="p-8">
-              <div className="flex items-start justify-between gap-4 mb-6">
-                <div className="flex-1">
-                  <Badge variant="secondary" className="mb-3">
-                    {job.category}
-                  </Badge>
-                  <h1 className="text-3xl font-bold mb-4">{job.title}</h1>
-                  <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                    <div className="flex items-center gap-1.5">
-                      <Clock className="w-4 h-4" />
-                      <span>Posted {job.postedTime}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <MapPin className="w-4 h-4" />
-                      <span className="capitalize">{job.location}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Briefcase className="w-4 h-4" />
-                      <span>{job.duration}</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex gap-2">
-                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
-                    <Bookmark className="w-5 h-5 hover:text-primary transition-colors duration-200" />
-                  </Button>
-                  <Button variant="outline" size="icon" className="hover:scale-110 transition-transform duration-200">
-                    <Share2 className="w-5 h-5 hover:text-primary transition-colors duration-200" />
-                  </Button>
-                </div>
-              </div>
+          {/* Back */}
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-sm mb-6 transition hover:opacity-80"
+            style={{ color: "var(--text-secondary)" }}
+          >
+            <ArrowLeft className="w-4 h-4" />
+            {t("common.back")}
+          </button>
 
-              <div className="flex items-center justify-between py-4 border-y">
-                <div>
-                  <div className="text-sm text-muted-foreground mb-1">
-                    {job.budgetType}
-                  </div>
-                  <div className="text-2xl font-bold">
-                    {job.budget}
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-sm text-muted-foreground mb-1">
-                    Proposals
-                  </div>
-                  <div className="text-2xl font-bold">{job.proposals || 0}</div>
-                </div>
-              </div>
-            </Card>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
-            {/* Tabs for Job Details and Proposals */}
-            <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="details">Job Details</TabsTrigger>
-                {isClient && (
-                  <TabsTrigger value="proposals">
-                    Proposals ({proposals.length})
-                  </TabsTrigger>
+            {/* ── MAIN CONTENT ── */}
+            <div className="lg:col-span-2 space-y-6">
+
+              {/* Header card */}
+              <div className="rounded-2xl p-6 ring-soft" style={{ background: "var(--bg-card)" }}>
+                <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2 flex-wrap">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${statusColor}`}>
+                        {job.status}
+                      </span>
+                      {job.category && (
+                        <span className="text-xs font-medium px-2.5 py-0.5 rounded-full"
+                          style={{ background: "var(--brand-dim)", color: "var(--brand)" }}>
+                          {job.category}
+                        </span>
+                      )}
+                      {isFreelancer && matchScore && (
+                        <span className="inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-0.5 rounded-full"
+                          style={{ background: "rgba(16,185,129,0.12)", color: "#10b981" }}>
+                          <Zap className="w-3 h-3" />
+                          {t("job.ai_match")}: {matchScore.score}%
+                        </span>
+                      )}
+                    </div>
+                    <h1 className="text-2xl sm:text-3xl font-bold mb-2"
+                      style={{ fontFamily: "var(--font-display)", color: "var(--text-primary)" }}>
+                      {job.title}
+                    </h1>
+                    <div className="flex flex-wrap gap-4 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <span className="flex items-center gap-1.5"><MapPin className="w-4 h-4" /> {job.location}</span>
+                      <span className="flex items-center gap-1.5"><Clock className="w-4 h-4" /> {job.duration}</span>
+                      <span className="flex items-center gap-1.5"><Eye className="w-4 h-4" /> {job.views} views</span>
+                      <span className="flex items-center gap-1.5"><FileText className="w-4 h-4" /> {job.proposals} proposals</span>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-2xl font-bold" style={{ color: "var(--brand)", fontFamily: "var(--font-display)" }}>
+                      {job.budget}
+                    </div>
+                    <div className="text-xs mt-0.5" style={{ color: "var(--text-muted)" }}>{job.budgetType}</div>
+                  </div>
+                </div>
+
+                {/* CTA buttons */}
+                {isFreelancer && job.status === "open" && (
+                  <button id="submit-proposal-btn" onClick={() => setProposalOpen(true)}
+                    className="mt-5 w-full py-3 rounded-xl text-[15px] font-semibold text-white transition-opacity hover:opacity-90 active:scale-[0.98] flex items-center justify-center gap-2"
+                    style={{ background: "var(--grad-brand)", boxShadow: "0 8px 24px -8px var(--brand-glow)" }}>
+                    <Send className="w-4 h-4" />
+                    {t("job.submit_proposal")}
+                  </button>
                 )}
-              </TabsList>
+                {!isSignedIn && !isLoaded && null}
+                {isLoaded && !isSignedIn && (
+                  <Link href={`/sign-in?redirect=/job/${jobId}`}
+                    className="mt-5 block text-center w-full py-3 rounded-xl text-[15px] font-semibold text-white transition-opacity hover:opacity-90"
+                    style={{ background: "var(--grad-brand)" }}>
+                    Sign In to Apply →
+                  </Link>
+                )}
+              </div>
 
-              <TabsContent value="details" className="space-y-6 mt-6">
-                {/* Job Description */}
-                <Card className="p-8">
-                  <h2 className="text-2xl font-bold mb-4">Job Description</h2>
-                  <div className="prose prose-sm max-w-none text-muted-foreground whitespace-pre-line">
-                    {job.description}
+              {/* Description */}
+              <div className="rounded-2xl p-6 ring-soft" style={{ background: "var(--bg-card)" }}>
+                <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+                  Job Description
+                </h2>
+                <p className="text-[15px] leading-relaxed whitespace-pre-line" style={{ color: "var(--text-secondary)" }}>
+                  {job.description}
+                </p>
+              </div>
+
+              {/* Skills */}
+              {job.skillsRequired?.length > 0 && (
+                <div className="rounded-2xl p-6 ring-soft" style={{ background: "var(--bg-card)" }}>
+                  <h2 className="text-lg font-semibold mb-3" style={{ color: "var(--text-primary)" }}>
+                    {t("job.skills_required")}
+                  </h2>
+                  <div className="flex flex-wrap gap-2">
+                    {job.skillsRequired.map((skill) => (
+                      <span key={skill} className="px-3 py-1.5 rounded-lg text-sm font-medium"
+                        style={{ background: "var(--bg-elevated)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
+                        {skill}
+                      </span>
+                    ))}
                   </div>
-                </Card>
+                </div>
+              )}
 
-                {/* Skills Required */}
-                {job.skillsRequired && job.skillsRequired.length > 0 && (
-                  <Card className="p-8">
-                    <h2 className="text-2xl font-bold mb-4">Skills Required</h2>
-                    <div className="flex flex-wrap gap-2">
-                      {job.skillsRequired.map((skill: string, index: number) => (
-                        <Badge key={index} variant="outline" className="px-3 py-1">
-                          {skill}
-                        </Badge>
+              {/* Proposal submission form (inline) */}
+              {isFreelancer && proposalOpen && (
+                <div className="rounded-2xl p-6 ring-soft" style={{ background: "var(--bg-card)", border: "1px solid var(--brand)" }}>
+                  <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
+                    {t("job.submit_proposal")}
+                  </h2>
+                  <form onSubmit={handleSubmitProposal} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                        {t("job.cover_letter")} *
+                      </label>
+                      <textarea
+                        required
+                        rows={5}
+                        className="w-full rounded-xl px-4 py-3 text-sm resize-none focus:outline-none focus:ring-1"
+                        style={{ background: "var(--bg)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
+                        placeholder="Describe your experience, why you're the best fit, and how you'll approach this job..."
+                        value={proposalForm.coverLetter}
+                        onChange={(e) => setProposalForm({ ...proposalForm, coverLetter: e.target.value })}
+                      />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                          {t("job.proposed_rate")} *
+                        </label>
+                        <input
+                          type="number"
+                          required
+                          min="0"
+                          className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+                          style={{ background: "var(--bg)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
+                          placeholder="e.g. 5000"
+                          value={proposalForm.proposedBudget}
+                          onChange={(e) => setProposalForm({ ...proposalForm, proposedBudget: e.target.value })}
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-sm font-medium mb-1.5" style={{ color: "var(--text-secondary)" }}>
+                          {t("job.delivery_time")}
+                        </label>
+                        <input
+                          type="text"
+                          className="w-full rounded-xl px-4 py-2.5 text-sm focus:outline-none"
+                          style={{ background: "var(--bg)", color: "var(--text-primary)", border: "1px solid var(--border)" }}
+                          placeholder="e.g. 3 days"
+                          value={proposalForm.proposedDuration}
+                          onChange={(e) => setProposalForm({ ...proposalForm, proposedDuration: e.target.value })}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex gap-3 pt-2">
+                      <button
+                        type="submit"
+                        disabled={submitting}
+                        className="flex-1 py-3 rounded-xl text-sm font-semibold text-white transition hover:opacity-90 disabled:opacity-60"
+                        style={{ background: "var(--grad-brand)" }}
+                      >
+                        {submitting ? "Submitting…" : "Submit Proposal →"}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setProposalOpen(false)}
+                        className="px-4 py-3 rounded-xl text-sm font-medium transition"
+                        style={{ background: "var(--bg-elevated)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}
+                      >
+                        {t("common.cancel")}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+
+              {/* Proposals list — client only */}
+              {isClient && (
+                <div className="rounded-2xl p-6 ring-soft" style={{ background: "var(--bg-card)" }}>
+                  <h2 className="text-lg font-semibold mb-4" style={{ color: "var(--text-primary)" }}>
+                    {t("job.proposals_received")} ({proposals.length})
+                  </h2>
+                  {proposals.length === 0 ? (
+                    <div className="text-center py-8" style={{ color: "var(--text-muted)" }}>
+                      <Users className="w-10 h-10 mx-auto mb-2 opacity-30" />
+                      No proposals yet. Share your job to attract applicants.
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      {proposals.map((proposal) => (
+                        <div key={proposal.id} className="rounded-xl p-4"
+                          style={{ background: "var(--bg-elevated)", border: "1px solid var(--border)" }}>
+                          <div className="flex items-start justify-between gap-3 mb-3">
+                            <div>
+                              <div className="font-semibold" style={{ color: "var(--text-primary)" }}>
+                                {proposal.freelancer_name}
+                              </div>
+                              <div className="flex items-center gap-3 mt-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                                <span className="flex items-center gap-1">
+                                  <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                                  {parseFloat(proposal.avg_rating || "0").toFixed(1)} ({proposal.review_count} reviews)
+                                </span>
+                                <span>{proposal.success_rate || 0}% success</span>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="font-bold" style={{ color: "var(--brand)" }}>
+                                PKR {Number(proposal.proposed_budget).toLocaleString()}
+                              </div>
+                              <div className="text-xs" style={{ color: "var(--text-muted)" }}>
+                                {proposal.proposed_duration}
+                              </div>
+                            </div>
+                          </div>
+                          <p className="text-sm mb-3 line-clamp-3" style={{ color: "var(--text-secondary)" }}>
+                            {proposal.cover_letter}
+                          </p>
+                          {proposal.status === "pending" ? (
+                            <div className="flex gap-2">
+                              <button id={`accept-proposal-${proposal.id}`}
+                                onClick={() => handleProposalAction(proposal.id, "accepted")}
+                                disabled={!!updatingId}
+                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold text-white transition hover:opacity-90"
+                                style={{ background: "var(--grad-brand)" }}>
+                                <CheckCircle className="w-4 h-4" /> {t("job.accept")}
+                              </button>
+                              <button id={`reject-proposal-${proposal.id}`}
+                                onClick={() => handleProposalAction(proposal.id, "rejected")}
+                                disabled={!!updatingId}
+                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-sm font-semibold transition"
+                                style={{ background: "var(--bg-card)", color: "var(--text-secondary)", border: "1px solid var(--border)" }}>
+                                <XCircle className="w-4 h-4" /> {t("job.reject")}
+                              </button>
+                            </div>
+                          ) : (
+                            <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium capitalize ${
+                              proposal.status === "accepted" ? "bg-emerald-500/15 text-emerald-400" : "bg-red-500/15 text-red-400"
+                            }`}>
+                              {proposal.status === "accepted" ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                              {proposal.status}
+                            </span>
+                          )}
+                        </div>
                       ))}
                     </div>
-                  </Card>
-                )}
-
-                {/* Similar Jobs */}
-                <Card className="p-8">
-                  <h2 className="text-2xl font-bold mb-4">Similar Jobs</h2>
-                  <div className="space-y-4">
-                    {similarJobs.length > 0 ? (
-                      similarJobs.map((similarJob) => (
-                        <Link
-                          key={similarJob.id}
-                          href={`/job/${similarJob.id}`}
-                          className="block p-4 border rounded-lg hover:border-primary transition-colors"
-                        >
-                          <h3 className="font-semibold mb-2">{similarJob.title}</h3>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span className="font-semibold text-foreground">
-                              {similarJob.budget}
-                            </span>
-                            <span className="capitalize">{similarJob.location}</span>
-                            <span>{similarJob.postedTime}</span>
-                          </div>
-                        </Link>
-                      ))
-                    ) : (
-                      <p className="text-sm text-muted-foreground">No similar jobs found</p>
-                    )}
-                  </div>
-                </Card>
-              </TabsContent>
-
-              {isClient && (
-                <TabsContent value="proposals" className="mt-6">
-                  <Card className="p-8">
-                    <h2 className="text-2xl font-bold mb-6">Received Proposals</h2>
-                    {proposals.length === 0 ? (
-                      <div className="text-center py-12">
-                        <AlertCircle className="w-12 h-12 mx-auto mb-4 text-muted-foreground" />
-                        <p className="text-muted-foreground">No proposals received yet</p>
-                      </div>
-                    ) : (
-                      <div className="space-y-6">
-                        {proposals.map((proposal) => (
-                          <div
-                            key={proposal.id}
-                            className="border rounded-lg p-6 space-y-4"
-                          >
-                            {/* Freelancer Info */}
-                            <div className="flex items-start justify-between gap-4">
-                              <div className="flex items-start gap-4">
-                                <Avatar className="w-14 h-14">
-                                  <AvatarFallback className="bg-primary/10 text-primary font-bold text-lg">
-                                    {proposal.freelancer_name?.charAt(0) || 'F'}
-                                  </AvatarFallback>
-                                </Avatar>
-                                <div>
-                                  <Link
-                                    href={`/freelancer/${proposal.freelancer_id}`}
-                                    className="font-semibold text-lg hover:text-primary transition-colors"
-                                  >
-                                    {proposal.freelancer_name}
-                                  </Link>
-                                  <div className="flex items-center gap-3 text-sm mt-1">
-                                    <div className="flex items-center gap-1">
-                                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                                      <span className="font-semibold">
-                                        {proposal.avg_rating ? parseFloat(proposal.avg_rating).toFixed(1) : 'N/A'}
-                                      </span>
-                                      <span className="text-muted-foreground">
-                                        ({proposal.review_count || 0})
-                                      </span>
-                                    </div>
-                                    {proposal.success_rate !== null && proposal.success_rate !== undefined && (
-                                      <span className="text-muted-foreground">
-                                        {proposal.success_rate}% success rate
-                                      </span>
-                                    )}
-                                  </div>
-                                </div>
-                              </div>
-                              <Badge
-                                variant={
-                                  proposal.status === 'accepted'
-                                    ? 'default'
-                                    : proposal.status === 'rejected'
-                                    ? 'destructive'
-                                    : 'secondary'
-                                }
-                              >
-                                {proposal.status}
-                              </Badge>
-                            </div>
-
-                            {/* Proposal Details */}
-                            <div className="grid md:grid-cols-2 gap-4 py-4 border-y">
-                              <div>
-                                <div className="text-sm text-muted-foreground mb-1">
-                                  Proposed Budget
-                                </div>
-                                <div className="text-xl font-bold">
-                                  PKR {proposal.proposed_budget?.toLocaleString() || 'N/A'}
-                                </div>
-                              </div>
-                              <div>
-                                <div className="text-sm text-muted-foreground mb-1">
-                                  Estimated Duration
-                                </div>
-                                <div className="text-xl font-bold">
-                                  {proposal.proposed_duration || 'N/A'}
-                                </div>
-                              </div>
-                            </div>
-
-                            {/* Cover Letter */}
-                            <div>
-                              <h4 className="font-semibold mb-2">Cover Letter</h4>
-                              <p className="text-sm text-muted-foreground whitespace-pre-line">
-                                {proposal.cover_letter}
-                              </p>
-                            </div>
-
-                            {/* Actions */}
-                            {proposal.status === 'pending' && (
-                              <div className="flex gap-3 pt-2">
-                                <Button
-                                  onClick={() => handleProposalAction(proposal.id, 'accepted')}
-                                  disabled={updatingProposal === proposal.id}
-                                  className="bg-green-600 hover:bg-green-700 hover:scale-105 transition-all duration-200"
-                                >
-                                  <CheckCircle className="w-4 h-4 mr-2" />
-                                  Accept Proposal
-                                </Button>
-                                <Button
-                                  onClick={() => handleProposalAction(proposal.id, 'rejected')}
-                                  disabled={updatingProposal === proposal.id}
-                                  variant="destructive"
-                                  className="hover:scale-105 transition-all duration-200"
-                                >
-                                  <XCircle className="w-4 h-4 mr-2" />
-                                  Reject
-                                </Button>
-                              </div>
-                            )}
-
-                            {/* Rate Freelancer Button for Completed Jobs */}
-                            {proposal.status === 'accepted' && job.status === 'completed' && (
-                              <div className="pt-2">
-                                <Button
-                                  onClick={() => {
-                                    setSelectedFreelancer({
-                                      id: proposal.freelancer_id,
-                                      name: proposal.freelancer_name
-                                    });
-                                    setReviewDialogOpen(true);
-                                  }}
-                                  variant="outline"
-                                  className="hover:scale-105 transition-all duration-200 hover:bg-primary/10"
-                                >
-                                  <Star className="w-4 h-4 mr-2" />
-                                  Rate Freelancer
-                                </Button>
-                              </div>
-                            )}
-
-                            <div className="text-xs text-muted-foreground">
-                              Submitted {new Date(proposal.created_at).toLocaleDateString()}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </Card>
-                </TabsContent>
+                  )}
+                </div>
               )}
-            </Tabs>
-          </div>
+            </div>
 
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Apply Card */}
-            {isFreelancer && (
-              <Card className="p-6 sticky top-4">
-                <Button
-                  size="lg"
-                  className="w-full rounded-full bg-gradient-accent hover:opacity-90 transition-opacity mb-4 group"
-                  onClick={() => setProposalDialogOpen(true)}
-                  disabled={!user}
-                >
-                  <Send className="mr-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
-                  Send Proposal
-                </Button>
-                <p className="text-sm text-muted-foreground text-center">
-                  Submit your proposal to this job
-                </p>
-              </Card>
-            )}
-
-            {/* Client Info */}
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">About the Client</h3>
-              <div className="space-y-4">
-                <div className="flex items-start gap-3">
-                  <Avatar className="w-12 h-12">
-                    <AvatarFallback className="bg-primary/10 text-primary font-bold">
-                      {job.client?.name?.charAt(0) || 'C'}
-                    </AvatarFallback>
-                  </Avatar>
+            {/* ── SIDEBAR ── */}
+            <div className="space-y-5">
+              {/* Client info */}
+              <div className="rounded-2xl p-5 ring-soft" style={{ background: "var(--bg-card)" }}>
+                <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "var(--text-muted)" }}>
+                  {t("job.posted_by")}
+                </h3>
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-white font-bold text-lg"
+                    style={{ background: "var(--grad-brand)" }}>
+                    {job.client.name?.[0] ?? "C"}
+                  </div>
                   <div>
-                    <div className="font-semibold">{job.client?.name || 'Client'}</div>
-                    <div className="flex items-center gap-1 text-sm">
-                      <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="font-semibold">{job.client?.rating || 'N/A'}</span>
-                      <span className="text-muted-foreground">
-                        ({job.client?.reviews || 0} reviews)
-                      </span>
+                    <div className="font-semibold" style={{ color: "var(--text-primary)" }}>{job.client.name}</div>
+                    <div className="flex items-center gap-1 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" />
+                      {job.client.rating} ({job.client.reviews} reviews)
                     </div>
                   </div>
                 </div>
-
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Jobs Posted</span>
-                    <span className="font-semibold">{job.client?.jobsPosted || 0}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Hire Rate</span>
-                    <span className="font-semibold">{job.client?.hireRate || '0%'}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Location</span>
-                    <span className="font-semibold capitalize">{job.location}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Status</span>
-                    <span className="font-semibold capitalize">{job.status}</span>
-                  </div>
+                <div className="space-y-2 text-sm" style={{ color: "var(--text-secondary)" }}>
+                  {[
+                    { label: "Jobs Posted", value: job.client.jobsPosted },
+                    { label: "Hire Rate",   value: job.client.hireRate },
+                    { label: "Member Since", value: job.client.memberSince },
+                  ].map(({ label, value }) => (
+                    <div key={label} className="flex justify-between">
+                      <span>{label}</span>
+                      <span className="font-medium" style={{ color: "var(--text-primary)" }}>{value}</span>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </Card>
 
-            {/* Job Activity */}
-            <Card className="p-6">
-              <h3 className="font-semibold mb-4">Job Activity</h3>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Proposals</span>
-                  <span className="font-semibold">{job.proposals || 0}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Posted</span>
-                  <span className="font-semibold">{job.postedTime}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-muted-foreground">Duration</span>
-                  <span className="font-semibold">{job.duration}</span>
+              {/* Job details */}
+              <div className="rounded-2xl p-5 ring-soft" style={{ background: "var(--bg-card)" }}>
+                <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "var(--text-muted)" }}>
+                  Job Details
+                </h3>
+                <div className="space-y-3">
+                  {[
+                    { icon: DollarSign, label: t("job.budget"),   value: job.budget },
+                    { icon: MapPin,     label: t("job.location"), value: job.location },
+                    { icon: Clock,      label: t("job.duration"), value: job.duration || "—" },
+                    { icon: Briefcase,  label: "Category",        value: job.category || "—" },
+                  ].map(({ icon: Icon, label, value }) => (
+                    <div key={label} className="flex items-center gap-3">
+                      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                        style={{ background: "var(--brand-dim)" }}>
+                        <Icon className="w-4 h-4" style={{ color: "var(--brand)" }} />
+                      </div>
+                      <div>
+                        <div className="text-xs" style={{ color: "var(--text-muted)" }}>{label}</div>
+                        <div className="text-sm font-medium" style={{ color: "var(--text-primary)" }}>{value}</div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </Card>
+
+              {/* Similar Jobs */}
+              {similarJobs.length > 0 && (
+                <div className="rounded-2xl p-5 ring-soft" style={{ background: "var(--bg-card)" }}>
+                  <h3 className="text-sm font-semibold uppercase tracking-wider mb-4" style={{ color: "var(--text-muted)" }}>
+                    {t("job.similar_jobs")}
+                  </h3>
+                  <div className="space-y-3">
+                    {similarJobs.map((sj) => (
+                      <Link key={sj.id} href={`/job/${sj.id}`}
+                        className="flex items-center justify-between group">
+                        <div>
+                          <div className="text-sm font-medium group-hover:underline"
+                            style={{ color: "var(--text-primary)" }}>{sj.title}</div>
+                          <div className="text-xs" style={{ color: "var(--brand)" }}>{sj.budget}</div>
+                        </div>
+                        <ChevronRight className="w-4 h-4 flex-shrink-0" style={{ color: "var(--text-muted)" }} />
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Proposal Dialog */}
-      <ProposalDialog
-        open={proposalDialogOpen}
-        onOpenChange={setProposalDialogOpen}
-        jobId={id}
-        jobTitle={job.title}
-        budgetRange={
-          job.budgetMin && job.budgetMax
-            ? { min: job.budgetMin, max: job.budgetMax }
-            : undefined
-        }
-      />
-
-      {/* Review Dialog */}
-      {selectedFreelancer && (
-        <ReviewDialog
-          open={reviewDialogOpen}
-          onOpenChange={setReviewDialogOpen}
-          jobId={id}
-          freelancerId={selectedFreelancer.id}
-          freelancerName={selectedFreelancer.name}
-          jobTitle={job.title}
-        />
-      )}
-
+      </main>
       <Footer />
-    </div>
+    </>
   );
 }

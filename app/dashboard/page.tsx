@@ -7,6 +7,7 @@ import { toast } from "@/components/ui/use-toast";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
 import { FullPageLoader, InlineLoader } from "@/components/Loader";
+import { useLanguage } from "@/lib/i18n/LanguageContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -113,13 +114,21 @@ export default function DashboardPage() {
       const profileRes = await fetch('/api/profile');
       if (profileRes.ok) {
         const profileData = await profileRes.json();
-        setProfile(profileData.profile);
+        const p = profileData.profile;
+
+        // Redirect to onboarding if no role selected yet
+        if (!p.userType) {
+          router.push('/onboarding');
+          return;
+        }
+
+        setProfile(p);
         setFormData({
-          fullName: profileData.profile.fullName || "",
-          bio: profileData.profile.bio || "",
-          location: profileData.profile.location || "",
-          phone: profileData.profile.phone || "",
-          hourlyRate: profileData.profile.hourlyRate?.toString() || "",
+          fullName: p.fullName || "",
+          bio: p.bio || "",
+          location: p.location || "",
+          phone: p.phone || "",
+          hourlyRate: p.hourlyRate?.toString() || "",
         });
       }
 
@@ -160,10 +169,10 @@ export default function DashboardPage() {
       const data = await response.json();
       setProfile(data.profile);
       setEditMode(false);
-      alert('Profile updated successfully!');
+      toast({ title: 'Profile Updated!', description: 'Your changes have been saved.' });
     } catch (error) {
       console.error('Failed to update profile:', error);
-      alert('Failed to update profile. Please try again.');
+      toast({ title: 'Error', description: 'Failed to update profile. Please try again.', variant: 'destructive' });
     } finally {
       setSaving(false);
     }
